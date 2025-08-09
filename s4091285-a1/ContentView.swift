@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        
         MainTabView()
     }
 }
@@ -29,18 +28,18 @@ struct MainTabView: View {
                 }
             SearchView()
                 .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Search")
-                }
-            WeightInputView()
-                .tabItem {
-                    Image(systemName: "plus")
-                    Text("Add Weight")
-                }
-            SettingsView()
-                .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
+                    Image("Food Log Icon")
+                    
+                    WeightInputView()
+                        .tabItem {
+                            Image(systemName: "plus")
+                            Text("Add Weight")
+                        }
+                    SettingsView()
+                        .tabItem {
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
                 }
         }
     }

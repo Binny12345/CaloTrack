@@ -15,7 +15,6 @@ struct DashboardView: View {
         FoodItem(name: "Apple", calories: 80, protein: 0, carbs: 22, fats: 0, mealType: "Snack", date: Date())
     ]
     
-    // MARK: - Computed Totals
     var totalCalories: Int {
         Int(sampleFoods.reduce(0) { $0 + $1.calories })
     }
