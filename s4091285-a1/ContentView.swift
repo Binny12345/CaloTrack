@@ -9,13 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        
+        MainTabView()
     }
 }
 
@@ -26,6 +21,11 @@ struct MainTabView: View {
                 .tabItem {
                     Image(systemName: "house")
                     Text("Dashboard")
+                }
+            BarcodeView()
+                .tabItem {
+                    Image(systemName: "camera")
+                    Text("Barcode")
                 }
             SearchView()
                 .tabItem {
@@ -43,5 +43,11 @@ struct MainTabView: View {
                     Text("Settings")
                 }
         }
+    }
+}
+
+struct appPreviews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }

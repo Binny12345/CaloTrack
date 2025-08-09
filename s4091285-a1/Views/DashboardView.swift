@@ -15,46 +15,107 @@ struct DashboardView: View {
         FoodItem(name: "Apple", calories: 80, protein: 0, carbs: 22, fats: 0, mealType: "Snack", date: Date())
     ]
     
+    // MARK: - Computed Totals
+    var totalCalories: Int {
+        Int(sampleFoods.reduce(0) { $0 + $1.calories })
+    }
+    
+    var totalProtein: Int {
+        Int(sampleFoods.reduce(0) { $0 + $1.protein })
+    }
+    
+    var totalCarbs: Int {
+        Int(sampleFoods.reduce(0) { $0 + $1.carbs })
+    }
+    
+    var totalFats: Int {
+        Int(sampleFoods.reduce(0) { $0 + $1.fats })
+    }
+    
     var body: some View {
-        NavigationView {
-            VStack(spacing: 16) {
-                // Calorie summary
-                Text("Calories Today: \(sampleFoods.reduce(0) { $0 + $1.calories }, specifier: "%.0f") kcal")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+        ScrollView {
+            Text("Dashboard")
+                .multilineTextAlignment(.leading)
+                .font(.title)
+                .bold()
+            VStack(alignment: .leading, spacing: 20) {
                 
-                // Macro breakdown
-                HStack {
-                    VStack {
-                        Text("Protein")
-                        Text("\(sampleFoods.reduce(0) { $0 + $1.protein }, specifier: "%.0f")g")
-                            .fontWeight(.bold)
-                    }
-                    Spacer()
-                    VStack {
-                        Text("Carbs")
-                        Text("\(sampleFoods.reduce(0) { $0 + $1.carbs }, specifier: "%.0f")g")
-                            .fontWeight(.bold)
-                    }
-                    Spacer()
-                    VStack {
-                        Text("Fats")
-                        Text("\(sampleFoods.reduce(0) { $0 + $1.fats }, specifier: "%.0f")g")
-                            .fontWeight(.bold)
+                // MARK: - Calorie Summary
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Calories Today")
+                        .font(.headline)
+                    HStack {
+                        Text("\(totalCalories) kcal")
+                            .font(.title2)
+                            .fontWeight(.semibold)
                     }
                 }
-                .padding(.horizontal)
+                    HStack {
+                        Text("Remaining: \(2000 - totalCalories) kcal")
+                            .foregroundStyle(.gray)
+                    
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
                 
-                Divider()
+                // MARK: - Macros
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Macronutrients")
+                        .font(.headline)
+                    
+                    HStack {
+                        MacroItem(label: "Protein", value: totalProtein, unit: "g")
+                        Spacer()
+                        MacroItem(label: "Carbs", value: totalCarbs, unit: "g")
+                        Spacer()
+                        MacroItem(label: "Fats", value: totalFats, unit: "g")
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
                 
+                // MARK: - Weight Stats Placeholder
+                VStack(alignment: .leading) {
+                    Text("Weight Stats")
+                        .foregroundColor(.gray)
+                        .padding(.top)
+                    // Add real weight graph or stats here
+                    Text("No data yet.")
+                }
+                .frame(width: 340, height: 280)
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                Spacer()
             }
             .padding()
-            .navigationTitle("Dashboard")
+            Spacer()
+        }
+        .navigationTitle("Dashboard")
+      }
+    }
+
+
+
+// MARK: - Macro Subview
+struct MacroItem: View {
+    let label: String
+    let value: Int
+    let unit: String
+
+    var body: some View {
+        VStack {
+            Text(label)
+                .font(.subheadline)
+            Text("\(value)\(unit)")
+                .fontWeight(.bold)
         }
     }
 }
 
-// Preview with dummy data
+// MARK: - Preview
 #Preview {
     DashboardView()
 }
