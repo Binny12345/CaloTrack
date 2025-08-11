@@ -23,28 +23,10 @@ https://github.com/rmit-iPSE-s2-2025/a1-s4091285
 
 ---
 
-## Data Storage
-CaloTrack uses **local JSON files** for persistence, ensuring the app works offline.
-
-**Files:**
-- `foods.json` – Stores all logged food items.
-- `weights.json` – Stores all weight entries.
-
-**Data Models:**
-```swift
-struct FoodItem: Identifiable, Codable {
-    var id: UUID
-    var name: String
-    var calories: Double
-    var protein: Double
-    var carbs: Double
-    var fats: Double
-    var mealType: String
-    var date: Date
-}
-
-struct WeightLog: Identifiable, Codable {
-    var id: UUID
-    var date: Date
-    var weight: Double
-}
+## References
+- Swift Documentation(2025), Apple Website,
+https://developer.apple.com/documentation/swift/
+- 
+## Generative AI Propmts 
+- Please provide me a draft of the initial skeleton code for this project
+- (Note: Code provided wasn't copy and pasted, used as a guide and reference)
