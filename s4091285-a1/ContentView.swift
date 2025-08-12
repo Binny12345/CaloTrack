@@ -18,39 +18,41 @@ struct MainTabView: View {
     
     var body: some View {
         ZStack {
-            TabView(selection: $selectedTab) {
-                DashboardView()
-                    .tabItem {
-                        Image(systemName: "house")
-                        Text("Dashboard")
-                    }
-                    .tag(0)
-                
-                BarcodeView()
-                    .tabItem {
-                        Image(systemName: "barcode.viewfinder")
-                        Text("Barcode")
-                    }
-                    .tag(1)
-                
-                Text("")
-                    .tabItem {Image(systemName: "") }
-                    .tag(2)
-                
-                WeightInputView()
-                    .tabItem {
-                        Image(systemName: "plus")
-                        Text("Add Weight")
-                    }
-                    .tag(3)
-                
-                SettingsView()
-                    .tabItem {
-                        Image(systemName: "gear")
-                        Text("Settings")
-                    }
-                    .tag(4)
-                
+            NavigationStack {
+                TabView(selection: $selectedTab) {
+                    DashboardView()
+                        .tabItem {
+                            Image(systemName: "house")
+                            Text("Dashboard")
+                        }
+                        .tag(0)
+                    
+                    BarcodeView()
+                        .tabItem {
+                            Image(systemName: "barcode.viewfinder")
+                            Text("Barcode")
+                        }
+                        .tag(1)
+                    
+                    Text("")
+                        .tabItem {Image(systemName: "") }
+                        .tag(2)
+                    
+                    WeightInputView()
+                        .tabItem {
+                            Image(systemName: "plus")
+                            Text("Add Weight")
+                        }
+                        .tag(3)
+                    
+                    SettingsView()
+                        .tabItem {
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
+                        .tag(4)
+                    
+                }
             }
             VStack {
                 Spacer()
@@ -64,7 +66,6 @@ struct MainTabView: View {
                             .resizable()
                             .frame(width: 60, height: 60)
                             .foregroundStyle(.green)
-                            .background(Circle().fill(Color.black))
                             .shadow(radius: 5)
                             .symbolEffect(.bounce.up.byLayer, options: .nonRepeating)
                     }

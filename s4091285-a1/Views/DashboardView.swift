@@ -10,7 +10,7 @@ import SwiftUI
 struct DashboardView: View {
     // Dummy sample data
     let sampleFoods: [FoodItem] = [
-        FoodItem(name: "Grilled Chicken", calories: 450, protein: 30, carbs: 0, fats: 5, mealType: "Lunch", date: Date()),
+        FoodItem(name: "Grilled Chicken", calories: 850, protein: 30, carbs: 0, fats: 5, mealType: "Lunch", date: Date()),
         FoodItem(name: "Oatmeal", calories: 150, protein: 5, carbs: 27, fats: 3, mealType: "Breakfast", date: Date()),
         FoodItem(name: "Apple", calories: 80, protein: 0, carbs: 22, fats: 0, mealType: "Snack", date: Date())
     ]
@@ -39,30 +39,55 @@ struct DashboardView: View {
                 .multilineTextAlignment(.leading)
                 .font(.title)
                 .bold()
+            
             VStack(alignment: .leading, spacing: 20) {
-                
+            
                 // MARK: - Calorie Today/Remaining
-                HStack(spacing: 10) {
-                    Text("Calories Today")
-                        .font(.headline)
+                HStack(alignment: .center, spacing: 20) {
                     
-                    Circle()
-                        .trim(from: 0, to: progress)
-                        .stroke(Color.green, lineWidth: 12)
-                        .rotationEffect(.degrees(-90))
-                        .frame(width: 80, height: 80)
-                        .animation(.easeOut, value: progress)
-                        .foregroundStyle(.green)
+                    // Progress Ring
+                    ZStack {
+                        Circle()
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 18)
+                        Circle()
+                            .trim(from: 0, to: progress)
+                            .stroke(Color.green, style: StrokeStyle(lineWidth: 18, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                        
+                        VStack {
+                            Text("\(totalCalories)")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            Text("Remaining")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .frame(width: 130, height: 130)
+                    .padding(.leading, 4)
                     
-                    Text("\(totalCalories)")
-                        .font(.title3)
-                        .fontWeight(.bold)
+                    Spacer()
                     
-                    Text("Remaining: \(2000 - totalCalories) kcal")
-                        .fontWeight(.medium)
+                    // Text Info
+                    VStack(alignment: .leading, spacing: 24) {
+                        Text("Total \n2000 kcal")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                        
+                        Text("Consumed\n\(totalCalories) kcal")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
                     
+                        NavigationLink(destination: AllMealsView()) {
+                            Text("All Meals")
+                                .fontWeight(.semibold)
+                                .foregroundColor(.green)
+                                .cornerRadius(3)
+                        
+                    }
                 }
-                .padding()
+                .padding(16)
                 .background(Color(.systemGray6))
                 .cornerRadius(12)
                 .shadow(radius: 1)
@@ -119,6 +144,7 @@ struct DashboardView: View {
         
     }
 }
+
 
 
 
