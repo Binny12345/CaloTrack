@@ -14,33 +14,64 @@ struct ContentView: View {
 }
 
 struct MainTabView: View {
+    @State private var selectedTab = 0
+    
     var body: some View {
-        TabView {
-            DashboardView()
-                .tabItem {
-                    Image(systemName: "house")
-                    Text("Dashboard")
-                }
-            BarcodeView()
-                .tabItem {
-                    Image(systemName: "camera")
-                    Text("Barcode")
-                }
-            SearchView()
-                .tabItem {
-                    Image("Food Log Icon")
+        ZStack {
+            TabView(selection: $selectedTab) {
+                DashboardView()
+                    .tabItem {
+                        Image(systemName: "house")
+                        Text("Dashboard")
+                    }
+                    .tag(0)
+                
+                BarcodeView()
+                    .tabItem {
+                        Image(systemName: "barcode.viewfinder")
+                        Text("Barcode")
+                    }
+                    .tag(1)
+                
+                Text("")
+                    .tabItem {Image(systemName: "") }
+                    .tag(2)
+                
+                WeightInputView()
+                    .tabItem {
+                        Image(systemName: "plus")
+                        Text("Add Weight")
+                    }
+                    .tag(3)
+                
+                SettingsView()
+                    .tabItem {
+                        Image(systemName: "gear")
+                        Text("Settings")
+                    }
+                    .tag(4)
+                
+            }
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
                     
-                    WeightInputView()
-                        .tabItem {
-                            Image(systemName: "plus")
-                            Text("Add Weight")
-                        }
-                    SettingsView()
-                        .tabItem {
-                            Image(systemName: "gear")
-                            Text("Settings")
-                        }
+                    Button(action: {
+                        selectedTab = 2
+                    }) {
+                        Image(systemName: "plus.circle")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                            .foregroundStyle(.green)
+                            .background(Circle().fill(Color.black))
+                            .shadow(radius: 5)
+                            .symbolEffect(.bounce.up.byLayer, options: .nonRepeating)
+                    }
+                    Spacer()
                 }
+            }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }
 }

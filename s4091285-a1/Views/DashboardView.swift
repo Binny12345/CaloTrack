@@ -10,7 +10,7 @@ import SwiftUI
 struct DashboardView: View {
     // Dummy sample data
     let sampleFoods: [FoodItem] = [
-        FoodItem(name: "Grilled Chicken", calories: 250, protein: 30, carbs: 0, fats: 5, mealType: "Lunch", date: Date()),
+        FoodItem(name: "Grilled Chicken", calories: 450, protein: 30, carbs: 0, fats: 5, mealType: "Lunch", date: Date()),
         FoodItem(name: "Oatmeal", calories: 150, protein: 5, carbs: 27, fats: 3, mealType: "Breakfast", date: Date()),
         FoodItem(name: "Apple", calories: 80, protein: 0, carbs: 22, fats: 0, mealType: "Snack", date: Date())
     ]
@@ -32,6 +32,8 @@ struct DashboardView: View {
     }
     
     var body: some View {
+        let progress = Double(totalCalories) / 2000.0
+        
         ScrollView {
             Text("Dashboard")
                 .multilineTextAlignment(.leading)
@@ -39,62 +41,85 @@ struct DashboardView: View {
                 .bold()
             VStack(alignment: .leading, spacing: 20) {
                 
-                // MARK: - Calorie Summary
-                VStack(alignment: .leading, spacing: 10) {
+                // MARK: - Calorie Today/Remaining
+                HStack(spacing: 10) {
                     Text("Calories Today")
                         .font(.headline)
-                    HStack {
-                        Text("\(totalCalories) kcal")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                    }
-                }
-                    HStack {
-                        Text("Remaining: \(2000 - totalCalories) kcal")
-                            .foregroundStyle(.gray)
+                    
+                    Circle()
+                        .trim(from: 0, to: progress)
+                        .stroke(Color.green, lineWidth: 12)
+                        .rotationEffect(.degrees(-90))
+                        .frame(width: 80, height: 80)
+                        .animation(.easeOut, value: progress)
+                        .foregroundStyle(.green)
+                    
+                    Text("\(totalCalories)")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                    
+                    Text("Remaining: \(2000 - totalCalories) kcal")
+                        .fontWeight(.medium)
                     
                 }
                 .padding()
                 .background(Color(.systemGray6))
-                .cornerRadius(10)
+                .cornerRadius(12)
+                .shadow(radius: 1)
                 
                 // MARK: - Macros
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Macronutrients")
                         .font(.headline)
+                        .bold()
+
+                    VStack(alignment: .leading) {
+                        Text("Protein: \(totalProtein)g")
+                        ProgressView(value: Double(totalProtein), total: 150)
+                            .tint(.green)
+                    }
                     
-                    HStack {
-                        MacroItem(label: "Protein", value: totalProtein, unit: "g")
-                        Spacer()
-                        MacroItem(label: "Carbs", value: totalCarbs, unit: "g")
-                        Spacer()
-                        MacroItem(label: "Fats", value: totalFats, unit: "g")
+                    Divider()
+                    
+                    VStack(alignment: .leading) {
+                        Text("Carbs: \(totalCarbs)g")
+                        ProgressView(value: Double(totalCarbs), total: 100)
+                            .tint(.green)
+                    }
+                    
+                    Divider()
+                    
+                    VStack(alignment: .leading) {
+                        Text("Fats: \(totalFats)g")
+                        ProgressView(value: Double(totalFats), total: 100)
+                            .tint(.green)
                     }
                 }
                 .padding()
                 .background(Color(.systemGray6))
-                .cornerRadius(10)
-                
+                .cornerRadius(12)
+                .shadow(radius: 1)
                 // MARK: - Weight Stats Placeholder
                 VStack(alignment: .leading) {
                     Text("Weight Stats")
                         .foregroundColor(.gray)
                         .padding(.top)
                     // Add real weight graph or stats here
-                    Text("No data yet.")
+                    
                 }
                 .frame(width: 340, height: 280)
                 .padding()
                 .background(Color(.systemGray6))
-                .cornerRadius(10)
-                Spacer()
+                .cornerRadius(12)
+                .shadow(radius: 1)
             }
             .padding()
             Spacer()
         }
-        .navigationTitle("Dashboard")
-      }
+        
     }
+}
+
 
 
 
