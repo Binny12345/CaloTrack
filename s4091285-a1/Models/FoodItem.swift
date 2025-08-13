@@ -17,4 +17,7 @@ struct FoodItem: Identifiable, Codable {
     var mealType: String
     var date: Date
     
+    private enum CodingKeys: String, CodingKey {
+            case name, calories, protein, carbs, fats, mealType, date
+        }
 }

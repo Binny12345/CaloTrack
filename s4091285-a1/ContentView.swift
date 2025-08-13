@@ -25,6 +25,7 @@ struct MainTabView: View {
                             Image(systemName: "house")
                             Text("Dashboard")
                         }
+                    // DEBUG: Checking Amount of logs within Data.geojson
                         .onAppear {
                             let foods = DataManager.loadFoodData()
                             print("Loaded \(foods.count) foods")

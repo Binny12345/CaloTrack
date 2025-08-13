@@ -10,9 +10,22 @@
 		33A0E5212E44785B001A70B2 /* s4091285-a1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "s4091285-a1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		338DEEE72E4C3471003806CB /* Exceptions for "s4091285-a1" folder in "s4091285-a1" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			platformFiltersByRelativePath = {
+				API/Data.geojson = (ios, );
+			};
+			target = 33A0E5202E44785B001A70B2 /* s4091285-a1 */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		33A0E5232E44785B001A70B2 /* s4091285-a1 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				338DEEE72E4C3471003806CB /* Exceptions for "s4091285-a1" folder in "s4091285-a1" target */,
+			);
 			path = "s4091285-a1";
 			sourceTree = "<group>";
 		};

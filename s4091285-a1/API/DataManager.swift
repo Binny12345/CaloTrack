@@ -11,7 +11,7 @@ struct DataManager {
         
     static func loadFoodData() -> [FoodItem] {
         
-        guard let url = Bundle.main.url(forResource: "Data", withExtension: "json") else {
+        guard let url = Bundle.main.url(forResource: "Data", withExtension: "geojson") else {
             print("JSON File not found")
             return []
         }
