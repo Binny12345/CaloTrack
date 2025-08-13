@@ -16,4 +16,5 @@ struct FoodItem: Identifiable, Codable {
     var fats: Double
     var mealType: String
     var date: Date
+    
 }

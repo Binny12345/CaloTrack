@@ -25,6 +25,10 @@ struct MainTabView: View {
                             Image(systemName: "house")
                             Text("Dashboard")
                         }
+                        .onAppear {
+                            let foods = DataManager.loadFoodData()
+                            print("Loaded \(foods.count) foods")
+                        }
                         .tag(0)
                     
                     BarcodeView()

@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Grilled Chicken Breast",
+        "calories": 250,
+        "protein": 30,
+        "carbs": 0,
+        "fats": 5,
+        "mealType": "Lunch",
+        "date": "2025-08-12T12:30:00Z"
+    },
+    {
+        "name": "Oatmeal with Berries",
+        "calories": 180,
+        "protein": 6,
+        "carbs": 32,
+        "fats": 3,
+        "mealType": "Breakfast",
+        "date": "2025-08-12T08:15:00Z"
+    },
+    {
+        "name": "Greek Yogurt",
+        "calories": 120,
+        "protein": 12,
+        "carbs": 8,
+        "fats": 4,
+        "mealType": "Snack",
+        "date": "2025-08-12T10:00:00Z"
+    },
+    {
+        "name": "Salmon with Vegetables",
+        "calories": 350,
+        "protein": 34,
+        "carbs": 10,
+        "fats": 20,
+        "mealType": "Dinner",
+        "date": "2025-08-11T19:00:00Z"
+    },
+    {
+        "name": "Banana",
+        "calories": 105,
+        "protein": 1,
+        "carbs": 27,
+        "fats": 0,
+        "mealType": "Snack",
+        "date": "2025-08-11T15:30:00Z"
+    },
+    {
+        "name": "Egg Omelette",
+        "calories": 220,
+        "protein": 14,
+        "carbs": 2,
+        "fats": 18,
+        "mealType": "Breakfast",
+        "date": "2025-08-11T07:45:00Z"
+    },
+    {
+        "name": "Turkey Sandwich",
+        "calories": 280,
+        "protein": 24,
+        "carbs": 30,
+        "fats": 8,
+        "mealType": "Lunch",
+        "date": "2025-08-10T12:20:00Z"
+    },
+    {
+        "name": "Apple",
+        "calories": 80,
+        "protein": 0,
+        "carbs": 22,
+        "fats": 0,
+        "mealType": "Snack",
+        "date": "2025-08-10T14:00:00Z"
+    }
+]
