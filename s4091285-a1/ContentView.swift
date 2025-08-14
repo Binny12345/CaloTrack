@@ -39,8 +39,14 @@ struct MainTabView: View {
                         }
                         .tag(1)
                     
-                    Text("")
-                        .tabItem {Image(systemName: "") }
+                    SearchView()
+                        .tabItem {
+                            Image(systemName: "plus.circle")
+                            .symbolRenderingMode(.palette)
+                            .background(.green)
+                            .shadow(radius: 5)
+                            .symbolEffect(.bounce.up.byLayer, options: .nonRepeating)
+                        }
                         .tag(2)
                     
                     WeightInputView()
@@ -59,25 +65,6 @@ struct MainTabView: View {
                     
                 }
             }
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    
-                    Button(action: {
-                        selectedTab = 2
-                    }) {
-                        Image(systemName: "plus.circle")
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                            .foregroundStyle(.green)
-                            .shadow(radius: 5)
-                            .symbolEffect(.bounce.up.byLayer, options: .nonRepeating)
-                    }
-                    Spacer()
-                }
-            }
-            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }
 }

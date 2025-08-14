@@ -26,6 +26,10 @@ struct DashboardView: View {
     var totalFats: Int {
         Int(sampleFoods.reduce(0) { $0 + $1.fats })
     }
+    var proteinGoal = 150
+    var fatGoal = 100
+    var carbsGoal = 300
+    
     
     var body: some View {
         let progress = Double(totalCalories) / 2000.0
@@ -77,10 +81,12 @@ struct DashboardView: View {
                     
                         NavigationLink(destination: AllMealsView()) {
                             Text("All Meals")
+                                .frame(width: 80, height: 50)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.green)
-                                .cornerRadius(3)
-                        
+                                .background(.green)
+                                .foregroundStyle(.white)
+                                .cornerRadius(8)
+
                     }
                 }
                 .padding(16)
@@ -95,24 +101,24 @@ struct DashboardView: View {
                         .bold()
 
                     VStack(alignment: .leading) {
-                        Text("Protein: \(totalProtein)g")
-                        ProgressView(value: Double(totalProtein), total: 150)
+                        Text("Protein: \(totalProtein)g / \(proteinGoal)g")
+                        ProgressView(value: Double(totalProtein), total: Double(proteinGoal))
                             .tint(.green)
                     }
                     
                     Divider()
                     
                     VStack(alignment: .leading) {
-                        Text("Carbs: \(totalCarbs)g")
-                        ProgressView(value: Double(totalCarbs), total: 100)
+                        Text("Carbs: \(totalCarbs)g / \(carbsGoal)g")
+                        ProgressView(value: Double(totalCarbs), total: Double(carbsGoal))
                             .tint(.green)
                     }
                     
                     Divider()
                     
                     VStack(alignment: .leading) {
-                        Text("Fats: \(totalFats)g")
-                        ProgressView(value: Double(totalFats), total: 100)
+                        Text("Fats: \(totalFats)g / \(fatGoal)g")
+                        ProgressView(value: Double(totalFats), total: Double(fatGoal))
                             .tint(.green)
                     }
                 }
