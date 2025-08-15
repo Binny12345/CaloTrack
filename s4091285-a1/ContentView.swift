@@ -45,7 +45,6 @@ struct MainTabView: View {
                             .symbolRenderingMode(.palette)
                             .background(.green)
                             .shadow(radius: 5)
-                            .symbolEffect(.bounce.up.byLayer, options: .nonRepeating)
                         }
                         .tag(2)
                     

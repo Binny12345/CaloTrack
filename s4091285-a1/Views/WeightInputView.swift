@@ -10,14 +10,20 @@ import SwiftUI
 struct WeightInputView: View {
     @State private var weight: String = ""
     @State private var selectedUnit: String = "kg"
+    @State private var selectedDate = Date()
     @State private var showConfirmation: Bool = false
     
     let units = ["kg", "lbs"]
     
     var body: some View {
         NavigationStack {
+            Text("Weight")
+                .multilineTextAlignment(.leading)
+                .font(.title)
+                .bold()
+                .padding()
             Form {
-                Section(header: Text("Enter Your Weight")) {
+                Section {
                     HStack {
                         TextField("Weight", text: $weight)
                             .keyboardType(.decimalPad)
@@ -30,25 +36,31 @@ struct WeightInputView: View {
                         .pickerStyle(SegmentedPickerStyle())
                         .frame(width: 120)
                     }
-                }
-                
-                Section {
+                    DatePicker("Select Day",
+                               selection: $selectedDate,
+                               in: ...Date(),
+                               displayedComponents: .date
+                    )
+                    .datePickerStyle(.graphical)
+                    
                     Button(action: saveWeight) {
                         Text("Add")
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.green)
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                             .cornerRadius(8)
                     }
                     .disabled(weight.isEmpty)
                 }
+                
+                Section {
+                }
             }
-            .padding(16)
-            .background(Color(.systemGray6))
+            .padding(20)
             .cornerRadius(12)
             .shadow(radius: 1)
-            .navigationTitle("Weight")
             .alert("Weight Saved!", isPresented: $showConfirmation) {
                 Button("OK", role: .cancel) { }
             }

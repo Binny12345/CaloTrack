@@ -8,79 +8,76 @@
 import SwiftUI
 
 struct AllMealsView: View {
-    var body: some View {
-        let sampleFoods: [FoodItem] = DataManager.loadFoodData()
-        
-        VStack(alignment: .leading) {
-            Text("All Meals")
-                .font(.title)
-                .bold()
-        }
-        .padding()
-        
-            VStack {
-                Text("Breakfast")
-                    .font(.title2)
-                    .bold()
-                ForEach(sampleFoods) { food in
-                    if food.mealType == "Breakfast" {
-                        Text(food.name)
-                    }
-                }
-                .padding(16)
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .shadow(radius: 1)
-            }
-        
-            VStack {
-                Text("Lunch")
-                    .font(.title2)
-                    .bold()
-                ForEach(sampleFoods) { food in
-                    if food.mealType == "Lunch" {
-                        Text(food.name)
-                    }
-                }
-                .padding(16)
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .shadow(radius: 1)
-            }
-        
-            VStack {
-                Text("Dinner")
-                    .font(.title2)
-                    .bold()
-                ForEach(sampleFoods) { food in
-                    if food.mealType == "Dinner" {
-                        Text(food.name)
-                    }
-                }
-                .padding(16)
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .shadow(radius: 1)
-            }
-        
-            VStack {
-                Text("Snacks")
-                    .font(.title2)
-                    .bold()
-                ForEach(sampleFoods) { food in
-                    if food.mealType == "Snack" {
-                        Text(food.name)
-                    }
-                }
-                .padding(16)
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .shadow(radius: 1)
-            }
-        }
+    let sampleFoods: [FoodItem] = DataManager.loadFoodData()
+    
+    var groupedMeals: [String: [FoodItem]] {
+        Dictionary(grouping: sampleFoods, by: { $0.mealType })
     }
+    
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                
+                // Title
+                Text("All Meals")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                
+                // Meal Sections
+                ForEach(["Breakfast", "Lunch", "Dinner", "Snack"], id: \.self) { mealType in
+                    if let foods = groupedMeals[mealType], !foods.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(mealType)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .padding(.horizontal)
+                            
+                            FoodItemCard(foods: foods)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 20)
+        }
+        .navigationTitle("All Meals")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
 
+struct FoodItemCard: View {
+    let foods: [FoodItem]
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            ForEach(foods, id: \.id) { food in
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(food.name)
+                            .font(.body)
+                            .fontWeight(.medium)
+                        Text("\(Int(food.calories)) kcal • \(Int(food.protein))g Protein")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "trash")
+                        .foregroundColor(.red)
+                        .frame(width: 24, height: 24)
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                .shadow(radius: 1)
+            }
+        }
+        .padding(.horizontal)
+    }
+}
 
 #Preview {
-    AllMealsView()
+    NavigationStack {
+        AllMealsView()
+    }
 }
