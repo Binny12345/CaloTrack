@@ -20,7 +20,7 @@ struct MainTabView: View {
         ZStack {
             NavigationStack {
                 TabView(selection: $selectedTab) {
-                    DashboardView()
+                    DashboardView(weightViewModel: WeightViewModel())
                         .tabItem {
                             Image(systemName: "house")
                             Text("Dashboard")
@@ -48,7 +48,7 @@ struct MainTabView: View {
                         }
                         .tag(2)
                     
-                    WeightInputView()
+                    WeightInputView(weightViewModel: WeightViewModel())
                         .tabItem {
                             Image(systemName: "plus")
                             Text("Add Weight")

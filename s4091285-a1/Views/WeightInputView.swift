@@ -9,11 +9,10 @@ import SwiftUI
 
 struct WeightInputView: View {
     @State private var weight: String = ""
-    @State private var selectedUnit: String = "kg"
-    @State private var selectedDate = Date()
+    @State private var unit: String = ""
+    @State private var date: Date = Date()
     @State private var showConfirmation: Bool = false
-    
-    let units = ["kg", "lbs"]
+    @ObservedObject var weightViewModel: WeightViewModel
     
     var body: some View {
         NavigationStack {
@@ -27,17 +26,9 @@ struct WeightInputView: View {
                     HStack {
                         TextField("Weight", text: $weight)
                             .keyboardType(.decimalPad)
-                        
-                        Picker("", selection: $selectedUnit) {
-                            ForEach(units, id: \.self) { unit in
-                                Text(unit)
-                            }
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .frame(width: 120)
                     }
                     DatePicker("Select Day",
-                               selection: $selectedDate,
+                               selection: $date,
                                in: ...Date(),
                                displayedComponents: .date
                     )
@@ -55,22 +46,34 @@ struct WeightInputView: View {
                     .disabled(weight.isEmpty)
                 }
                 
-                Section {
+                Section(header: Text("Saved Weights")) {
+                    ForEach(weightViewModel.logs) { log in
+                        HStack {
+                            Text("\(log.weight, specifier: "%.1f") kg")
+                            Spacer()
+                            Text(log.date, style: .date)
+                                .foregroundStyle(.white)
+                                .bold(true)
+                            
+                        }
+                    }
                 }
             }
             .padding(20)
             .cornerRadius(12)
             .shadow(radius: 1)
-            .alert("Weight Saved!", isPresented: $showConfirmation) {
+            .alert("Weight Has Been Saved!", isPresented: $showConfirmation) {
                 Button("OK", role: .cancel) { }
             }
         }
     }
     private func saveWeight() {
-        //TODO: Make data persistent
+        weightViewModel.addLog(weight: Double(weight) ?? 0, date: date, unit: "")
+        weight = ""
+        showConfirmation = true
     }
 }
 
 #Preview {
-    WeightInputView()
+    WeightInputView(weightViewModel: WeightViewModel())
 }

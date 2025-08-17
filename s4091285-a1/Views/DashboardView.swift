@@ -10,6 +10,7 @@ import SwiftUI
 struct DashboardView: View {
     // Dummy sample data
     let sampleFoods: [FoodItem] = DataManager.loadFoodData()
+    @ObservedObject var weightViewModel: WeightViewModel
     
     var totalCalories: Int {
         Int(sampleFoods.reduce(0) { $0 + $1.calories })
@@ -169,5 +170,5 @@ struct MacroItem: View {
 
 // MARK: - Preview
 #Preview {
-    DashboardView()
+    DashboardView(weightViewModel: WeightViewModel())
 }

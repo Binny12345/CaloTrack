@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct WeightLog: Identifiable, Codable {
+    var id = UUID()
+    var weight: Double
+    var date: Date
+}
