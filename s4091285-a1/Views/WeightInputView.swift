@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WeightInputView: View {
     @State private var weight: String = ""
-    @State private var unit: String = ""
+    @State private var unit: String = "kg"   // default to kg
     @State private var date: Date = Date()
     @State private var showConfirmation: Bool = false
     @ObservedObject var weightViewModel: WeightViewModel
@@ -21,12 +21,22 @@ struct WeightInputView: View {
                 .font(.title)
                 .bold()
                 .padding()
+            
             Form {
                 Section {
                     HStack {
                         TextField("Weight", text: $weight)
                             .keyboardType(.decimalPad)
+                            .onChange(of: weight) { oldValue, newValue in
+                                let filtered = newValue.filter {
+                                    "0123456789".contains($0)
+                                }
+                                if filtered != newValue {
+                                    weight = filtered
+                                }
+                            }
                     }
+                    
                     DatePicker("Select Day",
                                selection: $date,
                                in: ...Date(),
@@ -34,29 +44,33 @@ struct WeightInputView: View {
                     )
                     .datePickerStyle(.graphical)
                     
-                    Button(action: saveWeight) {
-                        Text("Add")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.black)
-                            .cornerRadius(8)
+                    let addButton = Text("Add")
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.black)
+                        .cornerRadius(8)
+
+                    Button(action: {
+                        saveWeight()
+                    }) {
+                        addButton
                     }
                     .disabled(weight.isEmpty)
                 }
                 
                 Section(header: Text("Saved Weights")) {
-                    ForEach(weightViewModel.logs) { log in
+                    let sortedItems = weightViewModel.logs.sorted { $0.date > $1.date }
+                    ForEach(sortedItems) { log in
                         HStack {
                             Text("\(log.weight, specifier: "%.1f") kg")
                             Spacer()
                             Text(log.date, style: .date)
-                                .foregroundStyle(.white)
-                                .bold(true)
-                            
+                                .foregroundColor(.secondary)
                         }
                     }
+                    .onDelete(perform: weightViewModel.removeLog)
                 }
             }
             .padding(20)
@@ -67,8 +81,9 @@ struct WeightInputView: View {
             }
         }
     }
+    
     private func saveWeight() {
-        weightViewModel.addLog(weight: Double(weight) ?? 0, date: date, unit: "")
+        weightViewModel.addLog(weight: Double(weight) ?? 0, date: date)
         weight = ""
         showConfirmation = true
     }

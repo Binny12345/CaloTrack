@@ -14,7 +14,7 @@
 		338DEEE72E4C3471003806CB /* Exceptions for "s4091285-a1" folder in "s4091285-a1" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			platformFiltersByRelativePath = {
-				API/Data.geojson = (ios, );
+				API/Data.json = (ios, );
 			};
 			target = 33A0E5202E44785B001A70B2 /* s4091285-a1 */;
 		};

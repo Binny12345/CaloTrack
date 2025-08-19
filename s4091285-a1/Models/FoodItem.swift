@@ -2,6 +2,8 @@
 //  FoodItem.swift
 //  s4091285-a1
 //
+//  Food Item Model used for inputting food items
+//
 //  Created by Binyam Sisay on 8/8/2025.
 //
 

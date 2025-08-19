@@ -2,6 +2,8 @@
 //  DataManager.swift
 //  s4091285-a1
 //
+//  Manages the Data within Data.json and prepares it to be accessed
+//
 //  Created by Binyam Sisay on 13/8/2025.
 //
 
@@ -11,7 +13,7 @@ struct DataManager {
         
     static func loadFoodData() -> [FoodItem] {
         
-        guard let url = Bundle.main.url(forResource: "Data", withExtension: "geojson") else {
+        guard let url = Bundle.main.url(forResource: "Data", withExtension: "json") else {
             print("JSON File not found")
             return []
         }

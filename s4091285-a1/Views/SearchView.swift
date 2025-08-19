@@ -28,6 +28,19 @@ struct SearchView: View {
                 .font(.title)
                 .bold()
             
+            Button {
+                // TODO: Connect to Manual Log page
+            } label: {
+                Text("Manual Log")
+                Image(systemName: "plus.circle")
+            }
+            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .background(Color(.green))
+            .foregroundColor(.white)
+            .font(.title3)
+            .cornerRadius(8)
+            
             VStack(alignment: .leading, spacing: 16) {
                 
                 HStack {
@@ -65,7 +78,6 @@ struct SearchView: View {
                 Text("Results")
                     .font(.headline)
                     .padding(.horizontal)
-                
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(filteredFoods) { food in
@@ -80,7 +92,7 @@ struct SearchView: View {
                                 }
                                 Spacer()
                                 Button {
-                                    // TODO: Hook up "Add to Diary"
+                                    
                                 } label: {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.title2)
