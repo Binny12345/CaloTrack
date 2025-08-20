@@ -10,6 +10,8 @@ import SwiftUI
 struct SearchView: View {
     @State private var searchText = ""
     @State private var allFoods: [FoodItem] = []
+    @State private var showingFoodDetail: Bool = false
+    @State private var selectedFood: FoodItem? = nil
     
     // MARK: - Array of Filtered FoodItems
     var filteredFoods: [FoodItem] {
@@ -92,7 +94,8 @@ struct SearchView: View {
                                 }
                                 Spacer()
                                 Button {
-                                    
+                                    selectedFood = food
+                                    showingFoodDetail = true
                                 } label: {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.title2)
@@ -112,6 +115,9 @@ struct SearchView: View {
             .onAppear {
                 allFoods = DataManager.loadFoodData()
             }
+        }
+        .sheet(isPresented: $showingFoodDetail) {
+                FoodDetailView(showingFoodDetail: $showingFoodDetail, foodItem: $selectedFood)
         }
     }
 }
