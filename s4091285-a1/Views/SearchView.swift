@@ -13,6 +13,8 @@ struct SearchView: View {
     @State private var showingFoodDetail: Bool = false
     @State private var selectedFood: FoodItem? = nil
     
+    @ObservedObject var dailyLogViewModel: DailyLogViewModel
+    
     // MARK: - Array of Filtered FoodItems
     var filteredFoods: [FoodItem] {
         if searchText.isEmpty {
@@ -117,11 +119,19 @@ struct SearchView: View {
             }
         }
         .sheet(isPresented: $showingFoodDetail) {
-                FoodDetailView(showingFoodDetail: $showingFoodDetail, foodItem: $selectedFood)
+            if let selectedFood = selectedFood {
+                FoodDetailView(
+                    foodItem: selectedFood,
+                    dailyLogViewModel: dailyLogViewModel,
+                    showingFoodDetail: $showingFoodDetail
+                    )
+            }
         }
     }
 }
 
 #Preview {
-    SearchView()
+    @Previewable @StateObject var mockDailyLogViewModel = DailyLogViewModel()
+    
+    SearchView(dailyLogViewModel: mockDailyLogViewModel)
 }

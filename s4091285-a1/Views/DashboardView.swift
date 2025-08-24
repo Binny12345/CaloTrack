@@ -60,26 +60,25 @@ struct WelcomeLayout: Layout {
 }
 
 
-
 struct DashboardView: View {
-    // Dummy sample data
-    let sampleFoods: [FoodItem] = DataManager.loadFoodData()
+
     @ObservedObject var weightViewModel: WeightViewModel
+    @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
     var totalCalories: Int {
-        Int(sampleFoods.reduce(0) { $0 + $1.calories })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.calories })
     }
     
     var totalProtein: Int {
-        Int(sampleFoods.reduce(0) { $0 + $1.protein })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.protein })
     }
     
     var totalCarbs: Int {
-        Int(sampleFoods.reduce(0) { $0 + $1.carbs })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.carbs })
     }
     
     var totalFats: Int {
-        Int(sampleFoods.reduce(0) { $0 + $1.fats })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.fats })
     }
     var proteinGoal = 150
     var fatGoal = 100
@@ -92,7 +91,7 @@ struct DashboardView: View {
         
         ScrollView {
             VStack(spacing: 20) {
-                // MARK: - Custom Welcome Header using Layout Protocol
+                // MARK: - Custom Layout Welcome Header using Layout Protocol
                 WelcomeLayout(spacing: 12) {
                     Image(systemName: "person.circle.fill")
                         .foregroundColor(.green)
@@ -118,18 +117,24 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     
                     // MARK: - Calorie Today/Remaining
-                    HStack(alignment: .center, spacing: 20) {
+                    HStack(alignment: .center, spacing: 24) {
                         
                         // Progress Ring
                         ZStack {
+                            // Changes Color depending on total calories consumed
+                            let ringColor = progress > 1.0 ? Color.red : Color.green
+                            
+                            // Grey Inner Circle
                             Circle()
                                 .stroke(Color.gray.opacity(0.2), lineWidth: 18)
+                            
+                            // Green/Red Outter Circle
                             Circle()
                                 .trim(from: 0, to: progress)
-                                .stroke(Color.green, style: StrokeStyle(lineWidth: 18, lineCap: .round))
+                                .stroke(ringColor, style: StrokeStyle(lineWidth: 18, lineCap: .round))
                                 .rotationEffect(.degrees(-90))
-                            
-                            VStack {
+
+                            VStack(spacing: 2) {
                                 Text("\(totalCalories)")
                                     .font(.title2)
                                     .fontWeight(.bold)
@@ -138,33 +143,58 @@ struct DashboardView: View {
                                     .foregroundColor(.secondary)
                             }
                         }
-                        .frame(width: 130, height: 130)
+                        .frame(width: 120, height: 120)
                         .padding(.leading, 4)
                         
                         Spacer()
                         
                         // Text Info
-                        VStack(alignment: .leading, spacing: 24) {
-                            Text("Total \n2000 kcal")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            
-                            Text("Consumed\n\(totalCalories) kcal")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                        }
+                        VStack(alignment: .leading, spacing: 4) {
+                             Text("Daily Goal")
+                                 .font(.subheadline)
+                                 .fontWeight(.medium)
+                                 .foregroundColor(.secondary)
+                             Text("2000 kcal")
+                                 .font(.title3)
+                                 .fontWeight(.bold)
+                         }
+                         
+                         // Remaining Section
+                         VStack(alignment: .leading, spacing: 4) {
+                             Text("Remaining")
+                                 .font(.subheadline)
+                                 .fontWeight(.medium)
+                                 .foregroundColor(.secondary)
+                             if totalCalories > 2000 {
+                                 Text("\(2000 - totalCalories) kcal")
+                                     .font(.title3)
+                                     .fontWeight(.bold)
+                                     .foregroundColor(.red)
+                             } else {
+                                 Text("\(2000 - totalCalories) kcal")
+                                     .font(.title3)
+                                     .fontWeight(.bold)
+                                     .foregroundColor(.green)
+                             }
+                         }
+                     }
                         
-                        NavigationLink(destination: AllMealsView()) {
-                            Text("All Meals")
-                                .frame(width: 80, height: 50)
-                                .fontWeight(.semibold)
-                                .background(.green)
-                                .foregroundStyle(.white)
-                                .cornerRadius(8)
-                            
+                    NavigationLink(destination: AllMealsView(dailyLogViewModel: dailyLogViewModel)) {
+                            VStack(spacing: 4) {
+                                Text("All Meals")
+                                    .frame(width: 80, height: 50)
+                                    .fontWeight(.semibold)
+                                    .background(.green)
+                                    .foregroundStyle(.white)
+                                    .cornerRadius(8)
+                            }
+                            .frame(width: 100, height: 60)
+                            .background(.green)
+                            .foregroundStyle(.white)
+                            .cornerRadius(12)
                         }
                     }
-                    .padding(16)
+                    .padding(20)
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
                     .shadow(radius: 1)
@@ -248,7 +278,7 @@ struct DashboardView: View {
             
         }
     }
-}
+
     
     
     
@@ -272,7 +302,7 @@ struct DashboardView: View {
     
     // MARK: - Preview
     #Preview {
-        DashboardView(weightViewModel: WeightViewModel())
+        DashboardView(weightViewModel: WeightViewModel(), dailyLogViewModel: DailyLogViewModel())
     }
     
     

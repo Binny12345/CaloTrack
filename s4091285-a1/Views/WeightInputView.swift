@@ -27,14 +27,14 @@ struct WeightInputView: View {
                     HStack {
                         TextField("Weight", text: $weight)
                             .keyboardType(.decimalPad)
-                            .onChange(of: weight) { oldValue, newValue in
-                                let filtered = newValue.filter {
-                                    "0123456789".contains($0)
-                                }
-                                if filtered != newValue {
-                                    weight = filtered
-                                }
-                            }
+//                            .onChange(of: weight) { oldValue, newValue in
+//                                let filtered = newValue.filter {
+//                                    "0123456789".contains($0)
+//                                }
+//                                if filtered != newValue {
+//                                    weight = filtered
+//                                }
+//                            }
                     }
                     
                     DatePicker("Select Day",
@@ -82,6 +82,7 @@ struct WeightInputView: View {
         }
     }
     
+    // TODO: Fix persistence for saving weight log
     private func saveWeight() {
         weightViewModel.addLog(weight: Double(weight) ?? 0, date: date)
         weight = ""

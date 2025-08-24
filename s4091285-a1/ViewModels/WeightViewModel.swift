@@ -2,7 +2,7 @@
 //  WeightViewModel.swift
 //  s4091285-a1
 //
-//  WeightView Model for manipulating the data within the views
+//  Model for WeightView to manipulate the data within the views
 //
 //  Created by Binyam Sisay on 8/8/2025.
 //

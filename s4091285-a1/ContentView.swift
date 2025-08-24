@@ -15,20 +15,20 @@ struct ContentView: View {
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @StateObject var weightViewModel = WeightViewModel()
+    @StateObject var dailyLogViewModel = DailyLogViewModel()
     
     var body: some View {
         ZStack {
             NavigationStack {
                 TabView(selection: $selectedTab) {
-                    DashboardView(weightViewModel: WeightViewModel())
+                    DashboardView(
+                          weightViewModel: weightViewModel,
+                          dailyLogViewModel: dailyLogViewModel
+                        )
                         .tabItem {
                             Image(systemName: "house")
                             Text("Dashboard")
-                        }
-                    // DEBUG: Checking Amount of logs within Data.geojson
-                        .onAppear {
-                            let foods = DataManager.loadFoodData()
-                            print("Loaded \(foods.count) foods")
                         }
                         .tag(0)
                     
@@ -39,7 +39,7 @@ struct MainTabView: View {
                         }
                         .tag(1)
                     
-                    SearchView()
+                    SearchView(dailyLogViewModel: dailyLogViewModel)
                         .tabItem {
                             Image(systemName: "plus.circle")
                             .symbolRenderingMode(.palette)
@@ -55,7 +55,7 @@ struct MainTabView: View {
                         }
                         .tag(3)
                     
-                    SettingsView()
+                    SettingsView(dailyLogViewModel: dailyLogViewModel)
                         .tabItem {
                             Image(systemName: "gear")
                             Text("Settings")

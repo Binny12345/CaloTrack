@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct AllMealsView: View {
-    let sampleFoods: [FoodItem] = DataManager.loadFoodData()
+    @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
-    var groupedMeals: [String: [FoodItem]] {
-        Dictionary(grouping: sampleFoods, by: { $0.mealType })
+    var groupedMeals: [String: [DailyLog]] {
+        Dictionary(grouping: dailyLogViewModel.dailyLogs, by: { $0.mealType })
     }
     
     var body: some View {
@@ -34,7 +34,7 @@ struct AllMealsView: View {
                                 .fontWeight(.bold)
                                 .padding(.horizontal)
                             
-                            FoodItemCard(foods: foods)
+                            FoodItemCard(dailyLogViewModel: dailyLogViewModel, foods: foods)
                         }
                     }
                 }
@@ -47,7 +47,8 @@ struct AllMealsView: View {
 }
 
 struct FoodItemCard: View {
-    let foods: [FoodItem]
+    @ObservedObject var dailyLogViewModel: DailyLogViewModel
+    let foods: [DailyLog]
     
     var body: some View {
         VStack(spacing: 8) {
@@ -62,9 +63,13 @@ struct FoodItemCard: View {
                             .foregroundColor(.secondary)
                     }
                     Spacer()
-                    Image(systemName: "trash")
-                        .foregroundColor(.red)
-                        .frame(width: 24, height: 24)
+                    Button {
+                        dailyLogViewModel.removeLog(withId: food.id)
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red)
+                            .frame(width: 24, height: 24)
+                    }
                 }
                 .padding()
                 .background(Color(.systemGray6))
@@ -78,6 +83,6 @@ struct FoodItemCard: View {
 
 #Preview {
     NavigationStack {
-        AllMealsView()
+        AllMealsView(dailyLogViewModel: DailyLogViewModel())
     }
 }
