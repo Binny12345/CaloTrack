@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct FoodItem: Identifiable, Codable {
+struct FoodItem: Identifiable, Codable, Equatable {
     var id = UUID()
     var name: String
     var calories: Double

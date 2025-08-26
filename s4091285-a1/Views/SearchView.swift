@@ -118,14 +118,11 @@ struct SearchView: View {
                 allFoods = DataManager.loadFoodData()
             }
         }
-        .sheet(isPresented: $showingFoodDetail) {
-            if let selectedFood = selectedFood {
-                FoodDetailView(
-                    foodItem: selectedFood,
-                    dailyLogViewModel: dailyLogViewModel,
-                    showingFoodDetail: $showingFoodDetail
-                    )
-            }
+        .sheet(item: $selectedFood) { item in
+            FoodDetailView(
+                foodItem: item,
+                dailyLogViewModel: dailyLogViewModel
+            )
         }
     }
 }

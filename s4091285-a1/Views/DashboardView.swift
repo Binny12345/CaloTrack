@@ -9,6 +9,8 @@ import SwiftUI
 import Charts
 
 // MARK: - Custom Welcome Layout
+
+/// Custom Layout, Personal welcome message to user, mentions name of user
 struct WelcomeLayout: Layout {
     var spacing: CGFloat = 12
     
@@ -84,7 +86,7 @@ struct DashboardView: View {
     var fatGoal = 100
     var carbsGoal = 300
     var weightGoal = 50
-    let userName = "Binny"
+    let userName = "User"
     
     var body: some View {
         let progress = Double(totalCalories) / 2000.0
@@ -97,7 +99,7 @@ struct DashboardView: View {
                         .foregroundColor(.green)
                         .font(.title2)
                     
-                    Text("Welcome,  \(userName)!")
+                    Text("Welcome \(userName)!")
                         .font(.title2)
                         .fontWeight(.semibold)
                 }

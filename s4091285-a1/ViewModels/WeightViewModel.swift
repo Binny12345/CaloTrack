@@ -19,10 +19,12 @@ class WeightViewModel: ObservableObject {
     func addLog(weight: Double, date: Date) {
         let newLog = WeightLog(weight: weight, date: date)
         logs.append(newLog)
+        print("Log added")
     }
     
     func removeLog(at offsets: IndexSet) {
         logs.remove(atOffsets: offsets)
+        print("logs removed")
     }
     
     private func getFileURL() -> URL {
@@ -42,6 +44,13 @@ class WeightViewModel: ObservableObject {
     
     private func loadLogs() {
         let url = getFileURL()
+        
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            print("No existing weight log file found - starting fresh")
+            logs = []
+            return
+        }
+        
         do {
             let data = try Data(contentsOf: url)
             logs = try JSONDecoder().decode([WeightLog].self, from: data)
@@ -52,3 +61,5 @@ class WeightViewModel: ObservableObject {
         }
     }
 }
+
+

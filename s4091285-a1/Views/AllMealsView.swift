@@ -41,8 +41,6 @@ struct AllMealsView: View {
             }
             .padding(.bottom, 20)
         }
-        .navigationTitle("All Meals")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

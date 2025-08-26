@@ -11,11 +11,23 @@ struct FoodDetailView: View {
     let foodItem: FoodItem
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
-    @Binding var showingFoodDetail: Bool
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var selectedMenuType: String = "Breakfast"
     @State private var servingSize: Double = 1.0
     
     let options = ["Breakfast", "Lunch", "Dinner", "Snack"]
+    
+    init(foodItem: FoodItem,
+         dailyLogViewModel: DailyLogViewModel,
+    ) {
+        self.foodItem = foodItem
+        self._dailyLogViewModel = ObservedObject(initialValue: dailyLogViewModel)
+
+        // Seed state from passed-in food item
+        self._selectedMenuType = State(initialValue: foodItem.mealType)
+        self._servingSize = State(initialValue: 1.0)
+    }
     
     // Adjust nutrition based on serving size
     var adjustedFoodItem: FoodItem {
@@ -89,7 +101,7 @@ struct FoodDetailView: View {
             VStack(spacing: 12) {
                 Button("Add to Log") {
                     dailyLogViewModel.addFoodToLog(foodItem: adjustedFoodItem, mealType: selectedMenuType)
-                    showingFoodDetail = false
+                    dismiss()
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -98,7 +110,7 @@ struct FoodDetailView: View {
                 .cornerRadius(10)
                 
                 Button("Close") {
-                    showingFoodDetail = false
+                    dismiss()
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -106,6 +118,10 @@ struct FoodDetailView: View {
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
+        }
+        .task(id: foodItem.id) {
+            selectedMenuType = foodItem.mealType
+            servingSize = 1.0
         }
         .padding()
     }
@@ -130,8 +146,7 @@ struct FoodDetailView: View {
         var body: some View {
             FoodDetailView(
                 foodItem: selectedFood,
-                dailyLogViewModel: logVM,
-                showingFoodDetail: $showingDetail
+                dailyLogViewModel: logVM
             )
         }
     }
