@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// WeightInputView for the user to input their weight for the day
 struct WeightInputView: View {
     @State private var weight: String = ""
     @State private var unit: String = "kg"   // default to kg
@@ -82,7 +83,6 @@ struct WeightInputView: View {
         }
     }
     
-    // TODO: Fix persistence for saving weight log
     private func saveWeight() {
         weightViewModel.addLog(weight: Double(weight) ?? 0, date: date)
         weight = ""

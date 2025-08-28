@@ -7,9 +7,11 @@
 
 import SwiftUI
 
+/// AllMealsView needed to display all of the user's logged meals for the day
 struct AllMealsView: View {
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
+    /// Groups meals by their mealType
     var groupedMeals: [String: [DailyLog]] {
         Dictionary(grouping: dailyLogViewModel.dailyLogs, by: { $0.mealType })
     }
@@ -44,6 +46,7 @@ struct AllMealsView: View {
     }
 }
 
+/// FoodItemCard to display each individual food item
 struct FoodItemCard: View {
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     let foods: [DailyLog]

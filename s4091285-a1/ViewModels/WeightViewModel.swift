@@ -2,36 +2,42 @@
 //  WeightViewModel.swift
 //  s4091285-a1
 //
-//  Model for WeightView to manipulate the data within the views
-//
 //  Created by Binyam Sisay on 8/8/2025.
 //
 import SwiftUI
 
+/// WeightViewModel needed to store all the functionality of the WeightInputView
 class WeightViewModel: ObservableObject {
     @Published var logs: [WeightLog] = []
     private let fileName = "WeightLogData.json"
     
+    /// Initialises the class with the Loadlogs func
     init() {
         loadLogs()
     }
     
+    /// Add a log into the current logs
+    /// - Parameter weight: The weight inputted by the user
+    /// - Parameter date: The date the log was made
     func addLog(weight: Double, date: Date) {
         let newLog = WeightLog(weight: weight, date: date)
         logs.append(newLog)
         print("Log added")
     }
-    
+    /// Remove a log into the current logs
+    /// - Parameter offsets: The index for which log the user is removing
     func removeLog(at offsets: IndexSet) {
         logs.remove(atOffsets: offsets)
         print("logs removed")
     }
     
+    /// Grabbing the URL of the JSON file storing the data
     private func getFileURL() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0].appendingPathComponent(fileName)
     }
     
+    /// Saves the logs into the JSON file
     private func saveLogs() {
         do {
             let data = try JSONEncoder().encode(logs)
@@ -42,6 +48,7 @@ class WeightViewModel: ObservableObject {
         }
     }
     
+    /// Loads the data from the JSON file
     private func loadLogs() {
         let url = getFileURL()
         

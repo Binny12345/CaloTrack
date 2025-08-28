@@ -13,6 +13,7 @@ struct ContentView: View {
     }
 }
 
+/// MainTabView to store the navigation tab and all pages linked to it
 struct MainTabView: View {
     @State private var selectedTab = 0
     @StateObject var weightViewModel = WeightViewModel()

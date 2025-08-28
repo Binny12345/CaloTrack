@@ -7,17 +7,26 @@
 
 import SwiftUI
 
+/// SettingsView for the user to view their settings
 struct SettingsView: View {
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @State private var clearLogsPopover: Bool = false
+    
     var body: some View {
         Form {
             Section(header: Text("Settings")) {
                 
                 // MARK: Personal Details/Historical Data
-                Text("Personal Details")
+                Button("Personal Details") {
+                    // Link to personal detail page
+                }
+                .foregroundStyle(.green)
+                    
                 
-                Text("Historical Data")
+                Button("Historical Data") {
+                    // Link to Data page
+                }
+                .foregroundStyle(.green)
             }
             
             // MARK: Clear Logs
@@ -25,7 +34,7 @@ struct SettingsView: View {
                 clearLogsPopover.toggle()
             } label: {
                 Text("Clear Logs For The Day")
-                    .foregroundStyle(.green)
+                    .foregroundStyle(.red)
             }
             .popover(isPresented: $clearLogsPopover) {
                 VStack() {

@@ -9,8 +9,10 @@
 
 import Foundation
 
+/// DataManager needed to handle the food items in the respective JSON file
 struct DataManager {
         
+    /// Loads the Data from the JSON file
     static func loadFoodData() -> [FoodItem] {
         
         guard let url = Bundle.main.url(forResource: "Data", withExtension: "json") else {

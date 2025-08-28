@@ -9,6 +9,7 @@
 
 import Foundation
 
+/// WeightLog needed to store the weight of the user
 struct WeightLog: Identifiable, Codable {
     var id = UUID()
     var weight: Double

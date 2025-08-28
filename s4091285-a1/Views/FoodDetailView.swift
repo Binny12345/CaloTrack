@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// FoodDetailView to display the detailed information of each FoodItem
 struct FoodDetailView: View {
     let foodItem: FoodItem
     
@@ -128,6 +129,7 @@ struct FoodDetailView: View {
 }
 
 #Preview {
+    // Added Dummy data in order for preview to function
     struct PreviewWrapper: View {
         @State var showingDetail = true
         @State var selectedFood = FoodItem(
@@ -154,6 +156,8 @@ struct FoodDetailView: View {
 }
 
 // MARK: - Helper View for Nutrition Display
+
+/// Helper NutritionItem struct to display the individual macros within the HStack
 struct NutritionItem: View {
     let label: String
     let value: Int

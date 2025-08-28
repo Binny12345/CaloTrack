@@ -9,6 +9,7 @@
 
 import Foundation
 
+/// FoodItem needed to store data of each food item
 struct FoodItem: Identifiable, Codable, Equatable {
     var id = UUID()
     var name: String
@@ -19,6 +20,7 @@ struct FoodItem: Identifiable, Codable, Equatable {
     var mealType: String
     var date: Date
     
+    /// Enum needed to organise the FoodItem struct
     private enum CodingKeys: String, CodingKey {
             case name, calories, protein, carbs, fats, mealType, date
         }

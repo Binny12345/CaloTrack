@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// SearchView for the user to search for their desired FoodItem (Currently hardcoded, will later use API)
 struct SearchView: View {
     @State private var searchText = ""
     @State private var allFoods: [FoodItem] = []
@@ -16,6 +17,8 @@ struct SearchView: View {
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
     // MARK: - Array of Filtered FoodItems
+    
+    // Filters through the list of foods according to whatt he user searched for
     var filteredFoods: [FoodItem] {
         if searchText.isEmpty {
             return allFoods
@@ -33,7 +36,7 @@ struct SearchView: View {
                 .bold()
             
             Button {
-                // TODO: Connect to Manual Log page
+                // TODO: Create and Connect to Manual Log page
             } label: {
                 Text("Manual Log")
                 Image(systemName: "plus.circle")

@@ -10,58 +10,7 @@ import Charts
 
 // MARK: - Custom Welcome Layout
 
-/// Custom Layout, Personal welcome message to user, mentions name of user
-struct WelcomeLayout: Layout {
-    var spacing: CGFloat = 12
-    
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        guard !subviews.isEmpty else { return .zero }
-        
-        let maxWidth = proposal.width ?? 0
-        var totalWidth: CGFloat = 0
-        var maxHeight: CGFloat = 0
-        
-        // Calculate the total width needed and maximum height
-        for (index, subview) in subviews.enumerated() {
-            let size = subview.sizeThatFits(.unspecified)
-            totalWidth += size.width
-            maxHeight = max(maxHeight, size.height)
-            
-            // Add spacing between elements (but not after the last one)
-            if index < subviews.count - 1 {
-                totalWidth += spacing
-            }
-        }
-        
-        return CGSize(
-            width: min(totalWidth, maxWidth),
-            height: maxHeight
-        )
-    }
-    
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        guard !subviews.isEmpty else { return }
-        
-        var currentX = bounds.minX
-        let centerY = bounds.midY
-        
-        for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            
-            // Center each subview vertically
-            let yPosition = centerY - (size.height / 2)
-            
-            subview.place(
-                at: CGPoint(x: currentX, y: yPosition),
-                proposal: ProposedViewSize(size)
-            )
-            
-            currentX += size.width + spacing
-        }
-    }
-}
-
-
+/// DashboardView to display the user's initial Data and what they have consumed
 struct DashboardView: View {
 
     @ObservedObject var weightViewModel: WeightViewModel
@@ -94,7 +43,7 @@ struct DashboardView: View {
         ScrollView {
             VStack(spacing: 20) {
                 // MARK: - Custom Layout Welcome Header using Layout Protocol
-                WelcomeLayout(spacing: 12) {
+                CustomLayoutView(spacing: 12) {
                     Image(systemName: "person.circle.fill")
                         .foregroundColor(.green)
                         .font(.title2)
@@ -281,26 +230,6 @@ struct DashboardView: View {
         }
     }
 
-    
-    
-    
-    
-    
-    // MARK: - Macro Subview
-    struct MacroItem: View {
-        let label: String
-        let value: Int
-        let unit: String
-        
-        var body: some View {
-            VStack {
-                Text(label)
-                    .font(.subheadline)
-                Text("\(value)\(unit)")
-                    .fontWeight(.bold)
-            }
-        }
-    }
     
     // MARK: - Preview
     #Preview {

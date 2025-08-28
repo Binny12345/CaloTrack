@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// DailyLog needed to store the food items of the user for the day
 struct DailyLog: Identifiable, Codable {
     var id = UUID()
     var name: String
@@ -17,6 +18,7 @@ struct DailyLog: Identifiable, Codable {
     var mealType: String
     var date: Date
     
+    /// Enum needed to organise the DailyLog struct
     private enum CodingKeys: String, CodingKey {
             case name, calories, protein, carbs, fats, mealType, date
         }
