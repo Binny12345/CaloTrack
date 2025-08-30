@@ -24,8 +24,12 @@ https://github.com/rmit-iPSE-s2-2025/a1-s4091285
 ## References
 - Swift Documentation(2025), Apple Website,
 https://developer.apple.com/documentation/swift/
-- 
+
 ## Generative AI Propmts 
 - Please provide me a draft of the initial skeleton code for this project
 - Can you create Dummy data in a JSON Format following the model I pasted below
+- Can you please help me debug this issue with my ModelView
+- Can you help explain to me what the problem is in this view
+- Can you help me in configuring the Custom Layout for my app
+- How can i effectively pass my data from the weight logs into the dashboard for viewing
 - (Note: Code provided wasn't copy and pasted, used as a guide and reference)
