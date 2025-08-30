@@ -66,6 +66,7 @@ struct MainTabView: View {
                 }
             }
         }
+        .preferredColorScheme(.dark)
     }
 }
 

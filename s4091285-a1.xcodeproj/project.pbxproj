@@ -13,6 +13,9 @@
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		338DEEE72E4C3471003806CB /* Exceptions for "s4091285-a1" folder in "s4091285-a1" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
 			platformFiltersByRelativePath = {
 				API/Data.json = (ios, );
 			};
@@ -269,6 +272,7 @@
 				DEVELOPMENT_TEAM = 396Z3UWA3M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "s4091285-a1/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -297,6 +301,7 @@
 				DEVELOPMENT_TEAM = 396Z3UWA3M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "s4091285-a1/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
