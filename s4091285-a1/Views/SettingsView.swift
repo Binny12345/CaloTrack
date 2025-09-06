@@ -66,5 +66,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(dailyLogViewModel: DailyLogViewModel())
+    //SettingsView(dailyLogViewModel: DailyLogViewModel())
 }

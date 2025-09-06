@@ -5,15 +5,29 @@
 //  Created by Binyam Sisay on 8/8/2025.
 //
 import SwiftUI
+import SwiftData
 
 /// WeightViewModel needed to store all the functionality of the WeightInputView
 class WeightViewModel: ObservableObject {
-    @Published var logs: [WeightLog] = []
-    private let fileName = "WeightLogData.json"
+    
+    private var context: ModelContext
+    @Published var weightLogs: [WeightLog] = []
     
     /// Initialises the class with the Loadlogs func
-    init() {
-        loadLogs()
+    init(context: ModelContext) {
+        self.context = context
+        fetchLogs()
+    }
+    
+    
+    /// Fetches all weight logs
+    func fetchLogs() {
+        let descriptor = FetchDescriptor<WeightLog>()
+        do {
+            weightLogs = try context.fetch(descriptor)
+        } catch {
+            print("Failed to fetch weight logs: \(error)")
+        }
     }
     
     /// Add a log into the current logs
@@ -21,50 +35,28 @@ class WeightViewModel: ObservableObject {
     /// - Parameter date: The date the log was made
     func addLog(weight: Double, date: Date) {
         let newLog = WeightLog(weight: weight, date: date)
-        logs.append(newLog)
-        print("Log added")
+        
+        context.insert(newLog)
+        saveContext()
+        fetchLogs()
+        print("Successfully added weight log: \(weight) kg on \(date)")
     }
     /// Remove a log into the current logs
     /// - Parameter offsets: The index for which log the user is removing
-    func removeLog(at offsets: IndexSet) {
-        logs.remove(atOffsets: offsets)
-        print("logs removed")
-    }
-    
-    /// Grabbing the URL of the JSON file storing the data
-    private func getFileURL() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0].appendingPathComponent(fileName)
-    }
-    
-    /// Saves the logs into the JSON file
-    private func saveLogs() {
-        do {
-            let data = try JSONEncoder().encode(logs)
-            try data.write(to: getFileURL())
-            print("Logs saved")
-        } catch {
-            print("Failed to save logs: \(error)")
+    func removeLog(withId id: UUID) {
+        if let logToDelete = weightLogs.first(where: { $0.id == id }) {
+            context.delete(logToDelete)
+            saveContext()
+            fetchLogs()
+            print("Successfully removed weight log.")
         }
     }
     
-    /// Loads the data from the JSON file
-    private func loadLogs() {
-        let url = getFileURL()
-        
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            print("No existing weight log file found - starting fresh")
-            logs = []
-            return
-        }
-        
+    private func saveContext() {
         do {
-            let data = try Data(contentsOf: url)
-            logs = try JSONDecoder().decode([WeightLog].self, from: data)
-            print("Loaded \(logs.count) logs from file")
+            try context.save()
         } catch {
-            print("No saved logs found: \(error)")
-            logs = []
+            print("Error saving context: \(error)")
         }
     }
 }

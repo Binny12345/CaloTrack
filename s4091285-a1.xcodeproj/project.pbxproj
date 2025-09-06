@@ -68,6 +68,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 33A0E52C2E44785E001A70B2 /* Build configuration list for PBXNativeTarget "s4091285-a1" */;
 			buildPhases = (
+				339624572E6807A200946EB4 /* ShellScript */,
 				33A0E51D2E44785B001A70B2 /* Sources */,
 				33A0E51E2E44785B001A70B2 /* Frameworks */,
 				33A0E51F2E44785B001A70B2 /* Resources */,
@@ -130,6 +131,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		339624572E6807A200946EB4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		33A0E51D2E44785B001A70B2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -143,6 +164,8 @@
 /* Begin XCBuildConfiguration section */
 		33A0E52A2E44785E001A70B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 33A0E5232E44785B001A70B2 /* s4091285-a1 */;
+			baseConfigurationReferenceRelativePath = Config/Secrets.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -207,6 +230,8 @@
 		};
 		33A0E52B2E44785E001A70B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 33A0E5232E44785B001A70B2 /* s4091285-a1 */;
+			baseConfigurationReferenceRelativePath = Config/Secrets.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -264,6 +289,8 @@
 		};
 		33A0E52D2E44785E001A70B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 33A0E5232E44785B001A70B2 /* s4091285-a1 */;
+			baseConfigurationReferenceRelativePath = Config/Secrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -293,6 +320,8 @@
 		};
 		33A0E52E2E44785E001A70B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 33A0E5232E44785B001A70B2 /* s4091285-a1 */;
+			baseConfigurationReferenceRelativePath = Config/Secrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

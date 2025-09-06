@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FATSECRET_CLIENT_SECRET</key>
+	<string>e78fc4ab563a46b9bff55c204401ec9b</string>
+	<key>FATSECRET_CLIENT_ID </key>
+	<string>f66c0e6b6c07419a9838639815cdaf8d</string>
 	<key>interface style</key>
 	<string></string>
 </dict>

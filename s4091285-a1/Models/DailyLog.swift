@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import SwiftData
 
 /// DailyLog needed to store the food items of the user for the day
-struct DailyLog: Identifiable, Codable {
+@Model
+class DailyLog {
     var id = UUID()
     var name: String
     var calories: Double
@@ -19,7 +21,14 @@ struct DailyLog: Identifiable, Codable {
     var date: Date
     
     /// Enum needed to organise the DailyLog struct
-    private enum CodingKeys: String, CodingKey {
-            case name, calories, protein, carbs, fats, mealType, date
-        }
+    init(id: UUID = UUID(), name: String, calories: Double, protein: Double, carbs: Double, fats: Double, mealType: String, date: Date) {
+        self.id = id
+        self.name = name
+        self.calories = calories
+        self.protein = protein
+        self.carbs = carbs
+        self.fats = fats
+        self.mealType = mealType
+        self.date = date
+    }
 }

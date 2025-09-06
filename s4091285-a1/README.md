@@ -32,4 +32,5 @@ https://developer.apple.com/documentation/swift/
 - Can you help explain to me what the problem is in this view
 - Can you help me in configuring the Custom Layout for my app
 - How can i effectively pass my data from the weight logs into the dashboard for viewing
+- Can you try to figure out the bug
 - (Note: Code provided wasn't copy and pasted, used as a guide and reference)

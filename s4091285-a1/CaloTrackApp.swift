@@ -6,13 +6,23 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
-struct s4091285_a1App: App {
+struct CaloTrackApp: App {
+    let container: ModelContainer
+    
+    init() {
+        container = try! ModelContainer(for: DailyLog.self, FoodItem.self, WeightLog.self)
+    }
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .preferredColorScheme(.dark)
+            ContentView(
+                dailyLogViewModel: DailyLogViewModel(context: container.mainContext),
+                weightViewModel: WeightViewModel(context: container.mainContext)
+            )
+            .modelContainer(container)
+            .preferredColorScheme(.dark)
         }
     }
 }

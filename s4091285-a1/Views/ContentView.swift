@@ -8,16 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var dailyLogViewModel: DailyLogViewModel
+    @StateObject var weightViewModel: WeightViewModel
+
     var body: some View {
-        MainTabView()
+        MainTabView(
+            weightViewModel: weightViewModel,
+            dailyLogViewModel: dailyLogViewModel
+        )
     }
 }
 
 /// MainTabView to store the navigation tab and all pages linked to it
 struct MainTabView: View {
+    @ObservedObject var weightViewModel: WeightViewModel
+    @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @State private var selectedTab = 0
-    @StateObject var weightViewModel = WeightViewModel()
-    @StateObject var dailyLogViewModel = DailyLogViewModel()
+    
     
     var body: some View {
         ZStack {
@@ -49,7 +56,7 @@ struct MainTabView: View {
                         }
                         .tag(2)
                     
-                    WeightInputView(weightViewModel: WeightViewModel())
+                    WeightInputView(weightViewModel: weightViewModel)
                         .tabItem {
                             Image(systemName: "plus")
                             Text("Add Weight")
@@ -70,8 +77,8 @@ struct MainTabView: View {
     }
 }
 
-struct appPreviews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct appPreviews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView(dailyLogViewModel: dailyLogViewModel, weightViewModel: weightViewModel)
+//    }
+//}

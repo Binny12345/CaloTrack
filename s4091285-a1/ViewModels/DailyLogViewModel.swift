@@ -7,15 +7,28 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 /// DailyLogViewModel needed to store all the functionality of the SearchView and FoodDetailView
 class DailyLogViewModel: ObservableObject {
+    private var context: ModelContext
     @Published var dailyLogs: [DailyLog] = []
-    private var fileName = "DailyLogs.json"
     
-    /// Initialises the class with the Loadlogs func
-    init() {
-        loadLogs()
+    /// Initialises the class with the context from DailyLog Model
+    init(context: ModelContext) {
+        self.context = context
+        fetchLogs()
+    }
+    
+    /// Fetches for all logs
+    func fetchLogs() {
+        let descriptor = FetchDescriptor<DailyLog>()
+        do {
+            dailyLogs = try context.fetch(descriptor)
+        } catch {
+            print("Failed to fetch daily logs: \(error)")
+            dailyLogs = []
+        }
     }
     
     /// Adds a food item to the user's daily log
@@ -32,34 +45,32 @@ class DailyLogViewModel: ObservableObject {
             date: Date()
         )
         
-        dailyLogs.append(logEntry)
-        saveLogs()
+        context.insert(logEntry)
+        saveContext()
+        fetchLogs()
         print("Successfully added \(foodItem.name) to daily log.")
     }
     
     /// Removes the food item from the daily log
+    /// - Parameter id: The specified id for each food item
     func removeLog(withId id: UUID) {
-        dailyLogs.removeAll { $0.id == id }
-        saveLogs()
-        print("Successfully removed 1 food item from daily log.")
+        if let logToDelete = dailyLogs.first(where: { $0.id == id }) {
+            context.delete(logToDelete)
+            saveContext()
+            fetchLogs()
+            
+            print("Successfully removed 1 food item from daily log.")
+        }
     }
     
     /// Removes all food items from daily log
     func clearDailyLogs() {
-        let fileManager = FileManager.default
-        let url = getFileURL()
-        
-        if fileManager.fileExists(atPath: url.path) {
-            do {
-                try fileManager.removeItem(at: url)
-                dailyLogs.removeAll() // Clear in-memory logs too
-                print("DailyLogs.json cleared!")
-            } catch {
-                print("Failed to delete DailyLogs.json: \(error)")
-            }
-        } else {
-            print("No DailyLogs.json file found to delete.")
+        for log in dailyLogs {
+            context.delete(log)
         }
+        saveContext()
+        fetchLogs()
+        print("All logs cleared!")
     }
     
     /// Variable that stores all of the logs for the day
@@ -71,42 +82,14 @@ class DailyLogViewModel: ObservableObject {
             log.date >= today && log.date < tomorrow!
         }
     }
-    
-    /// Grabbing the URL of the JSON file storing the data
-    private func getFileURL() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0].appendingPathComponent(fileName)
-    }
-    
-    /// Saves the logs into the JSON file
-    private func saveLogs() {
+    /// Saves the context of DailyLogs
+    private func saveContext() {
         do {
-            let data = try JSONEncoder().encode(dailyLogs)
-            let url = getFileURL()
-            try data.write(to: url)
-            print("Daily Logs saved")
+            try context.save()
         } catch {
-            print("Error with saving logs: \(error)")
+            print("Error saving context: \(error)")
         }
     }
-    
-    /// Loads the data from the JSON file
-    private func loadLogs() {
-        let url = getFileURL()
-        
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            print("No existing daily log file found - starting fresh")
-            dailyLogs = []
-            return
-        }
-        
-        do {
-            let data = try Data(contentsOf: url)
-            dailyLogs = try JSONDecoder().decode([DailyLog].self, from: data)
-            print("Loaded \(dailyLogs.count) Daily logs from file")
-        } catch {
-            print("No saved logs found: \(error)")
-            dailyLogs = []
-        }
-    }
+
 }
+

@@ -83,7 +83,7 @@ struct FoodItemCard: View {
 }
 
 #Preview {
-    NavigationStack {
-        AllMealsView(dailyLogViewModel: DailyLogViewModel())
-    }
+//    NavigationStack {
+//        AllMealsView(dailyLogViewModel: DailyLogViewModel())
+//    }
 }

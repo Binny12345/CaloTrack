@@ -62,7 +62,8 @@ struct WeightInputView: View {
                 }
                 
                 Section(header: Text("Saved Weights")) {
-                    let sortedItems = weightViewModel.logs.sorted { $0.date > $1.date }
+                    let sortedItems = weightViewModel.weightLogs.sorted{ $0.date > $1.date }
+                    
                     ForEach(sortedItems) { log in
                         HStack {
                             Text("\(log.weight, specifier: "%.1f") kg")
@@ -71,7 +72,7 @@ struct WeightInputView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    .onDelete(perform: weightViewModel.removeLog)
+                    //.onDelete(perform: weightViewModel.removeLog(weightLogs.self))
                 }
             }
             .padding(20)
@@ -91,5 +92,5 @@ struct WeightInputView: View {
 }
 
 #Preview {
-    WeightInputView(weightViewModel: WeightViewModel())
+//    WeightInputView(weightViewModel: WeightViewModel())
 }

@@ -16,16 +16,7 @@ struct SearchView: View {
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
-    // MARK: - Array of Filtered FoodItems
-    
-    // Filters through the list of foods according to whatt he user searched for
-    var filteredFoods: [FoodItem] {
-        if searchText.isEmpty {
-            return allFoods
-        } else {
-            return allFoods.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-        }
-    }
+    var filteredFoods: [FoodItem] { allFoods }
     
     // MARK: - Search Bar
     var body: some View {
@@ -36,10 +27,15 @@ struct SearchView: View {
                 .bold()
             
             Button {
-                // TODO: Create and Connect to Manual Log page
+                
             } label: {
                 Text("Manual Log")
                 Image(systemName: "plus.circle")
+            }
+            .sheet(item: $selectedFood) { item in
+                ManualLogView(
+                    dailyLogViewModel: dailyLogViewModel
+                )
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 12)
@@ -115,23 +111,31 @@ struct SearchView: View {
                     }
                     .padding(.horizontal)
                 }
+                .onChange(of: searchText) { oldValue, newValue in
+                    guard !newValue.isEmpty else {
+                        allFoods = []
+                        return
+                    }
+                    FatSecretAPI.shared.searchFoods(query: newValue) { results in
+                        DispatchQueue.main.async {
+                            self.allFoods = results
+                        }
+                    }
+                }
+                .padding(.top)
             }
-            .padding(.top)
-            .onAppear {
-                allFoods = DataManager.loadFoodData()
+            .sheet(item: $selectedFood) { item in
+                FoodDetailView(
+                    foodItem: item,
+                    dailyLogViewModel: dailyLogViewModel
+                )
             }
-        }
-        .sheet(item: $selectedFood) { item in
-            FoodDetailView(
-                foodItem: item,
-                dailyLogViewModel: dailyLogViewModel
-            )
         }
     }
 }
 
-#Preview {
-    @Previewable @StateObject var mockDailyLogViewModel = DailyLogViewModel()
-    
-    SearchView(dailyLogViewModel: mockDailyLogViewModel)
-}
+//#Preview {
+//    @Previewable @StateObject var mockDailyLogViewModel = DailyLogViewModel()
+//    
+//    SearchView(dailyLogViewModel: mockDailyLogViewModel)
+//}

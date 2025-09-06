@@ -7,12 +7,12 @@
 
 import SwiftUI
 import Charts
+import SwiftData
 
 // MARK: - Custom Welcome Layout
-
 /// DashboardView to display the user's initial Data and what they have consumed
 struct DashboardView: View {
-
+    
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
@@ -31,6 +31,8 @@ struct DashboardView: View {
     var totalFats: Int {
         Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.fats })
     }
+    
+    // TODO: Connect this to data inputted by user
     var proteinGoal = 150
     var fatGoal = 100
     var carbsGoal = 300
@@ -84,7 +86,7 @@ struct DashboardView: View {
                                 .trim(from: 0, to: progress)
                                 .stroke(ringColor, style: StrokeStyle(lineWidth: 18, lineCap: .round))
                                 .rotationEffect(.degrees(-90))
-
+                            
                             VStack(spacing: 2) {
                                 Text("\(totalCalories)")
                                     .font(.title2)
@@ -101,139 +103,149 @@ struct DashboardView: View {
                         
                         // Text Info
                         VStack(alignment: .leading, spacing: 4) {
-                             Text("Daily Goal")
-                                 .font(.subheadline)
-                                 .fontWeight(.medium)
-                                 .foregroundColor(.secondary)
-                             Text("2000 kcal")
-                                 .font(.title3)
-                                 .fontWeight(.bold)
-                         }
-                         
-                         // Remaining Section
-                         VStack(alignment: .leading, spacing: 4) {
-                             Text("Remaining")
-                                 .font(.subheadline)
-                                 .fontWeight(.medium)
-                                 .foregroundColor(.secondary)
-                             if totalCalories > 2000 {
-                                 Text("\(2000 - totalCalories) kcal")
-                                     .font(.title3)
-                                     .fontWeight(.bold)
-                                     .foregroundColor(.red)
-                             } else {
-                                 Text("\(2000 - totalCalories) kcal")
-                                     .font(.title3)
-                                     .fontWeight(.bold)
-                                     .foregroundColor(.green)
-                             }
-                         }
-                     }
+                            Text("Daily Goal")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                            Text("2000 kcal")
+                                .font(.title3)
+                                .fontWeight(.bold)
+                        }
                         
-                    NavigationLink(destination: AllMealsView(dailyLogViewModel: dailyLogViewModel)) {
-                            VStack(spacing: 4) {
-                                Text("All Meals")
-                                    .frame(width: 80, height: 50)
-                                    .fontWeight(.semibold)
-                                    .background(.green)
-                                    .foregroundStyle(.white)
-                                    .cornerRadius(8)
+                        // Remaining Section
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Remaining")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                            if totalCalories > 2000 {
+                                Text("\(2000 - totalCalories) kcal")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.red)
+                            } else {
+                                Text("\(2000 - totalCalories) kcal")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.green)
                             }
-                            .frame(width: 100, height: 60)
-                            .background(.green)
-                            .foregroundStyle(.white)
-                            .cornerRadius(12)
                         }
                     }
-                    .padding(20)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
-                    .shadow(radius: 1)
                     
-                    // MARK: - Macros
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Macronutrients")
-                            .font(.headline)
-                            .bold()
-                        
-                        VStack(alignment: .leading) {
-                            Text("Protein: \(totalProtein)g / \(proteinGoal)g")
-                            ProgressView(value: Double(totalProtein), total: Double(proteinGoal))
-                                .tint(.green)
+                    NavigationLink(destination: AllMealsView(dailyLogViewModel: dailyLogViewModel)) {
+                        VStack(spacing: 4) {
+                            Text("All Meals")
+                                .frame(width: 80, height: 50)
+                                .fontWeight(.semibold)
+                                .background(.green)
+                                .foregroundStyle(.white)
+                                .cornerRadius(8)
                         }
-                        
-                        Divider()
-                        
-                        VStack(alignment: .leading) {
-                            Text("Carbs: \(totalCarbs)g / \(carbsGoal)g")
-                            ProgressView(value: Double(totalCarbs), total: Double(carbsGoal))
-                                .tint(.green)
-                        }
-                        
-                        Divider()
-                        
-                        VStack(alignment: .leading) {
-                            Text("Fats: \(totalFats)g / \(fatGoal)g")
-                            ProgressView(value: Double(totalFats), total: Double(fatGoal))
-                                .tint(.green)
-                        }
+                        .frame(width: 100, height: 60)
+                        .background(.green)
+                        .foregroundStyle(.white)
+                        .cornerRadius(12)
                     }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
-                    .shadow(radius: 1)
-                    // MARK: - Weight Stats Placeholder
+                }
+                .padding(20)
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+                .shadow(radius: 1)
+                
+                // MARK: - Macros
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Macronutrients")
+                        .font(.headline)
+                        .bold()
+                    
                     VStack(alignment: .leading) {
-                        Text("Weight Stats")
-                            .font(.title3)
-                            .font(.headline)
-                            .bold()
-                        
-                        Text("Goal: \(weightGoal)kg")
-                            .foregroundStyle(.secondary)
-                            .padding(.bottom)
-                        
-                        let weightData: [WeightLog] = weightViewModel.logs.map { log in
-                            WeightLog(weight: Double(log.weight), date: log.date)
-                        }
-                        
-                        HStack {
-                            Chart(weightData) {
-                                LineMark(
-                                    x: .value("Date", $0.date),
-                                    y: .value("Weight", $0.weight)
-                                )
-                                .foregroundStyle(.gray)
-                                
-                                PointMark(
-                                    x: .value("Date", $0.date),
-                                    y: .value("Weight", $0.weight)
-                                )
-                                .symbol(.circle)
-                                .symbolSize(30)
-                                .foregroundStyle(.green)
-                            }
-                            .frame(height: 200)
-                        }
-                        
+                        Text("Protein: \(totalProtein)g / \(proteinGoal)g")
+                        ProgressView(value: Double(totalProtein), total: Double(proteinGoal))
+                            .tint(.green)
                     }
-                    .frame(width: 340, height: 280)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
-                    .shadow(radius: 1)
+                    
+                    Divider()
+                    
+                    VStack(alignment: .leading) {
+                        Text("Carbs: \(totalCarbs)g / \(carbsGoal)g")
+                        ProgressView(value: Double(totalCarbs), total: Double(carbsGoal))
+                            .tint(.green)
+                    }
+                    
+                    Divider()
+                    
+                    VStack(alignment: .leading) {
+                        Text("Fats: \(totalFats)g / \(fatGoal)g")
+                        ProgressView(value: Double(totalFats), total: Double(fatGoal))
+                            .tint(.green)
+                    }
                 }
                 .padding()
-                Spacer()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+                .shadow(radius: 1)
+                // MARK: - Weight Stats Placeholder
+                VStack(alignment: .leading) {
+                    Text("Weight Stats")
+                        .font(.headline)
+                        .bold()
+                    Text("Goal: \(weightGoal)kg")
+                        .foregroundStyle(.secondary)
+                    
+                    Chart(weightViewModel.weightLogs) { log in
+                        LineMark(
+                            x: .value("Date", log.date),
+                            y: .value("Weight", log.weight)
+                        )
+                        PointMark(
+                            x: .value("Date", log.date),
+                            y: .value("Weight", log.weight)
+                        )
+                        .symbol(.circle)
+                        .symbolSize(30)
+                        .foregroundStyle(.green)
+                    }
+                    .frame(height: 200)
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+                .shadow(radius: 1)
             }
-            
+            .padding()
+            Spacer()
         }
+        
     }
+}
 
     
-    // MARK: - Preview
-    #Preview {
-        DashboardView(weightViewModel: WeightViewModel(), dailyLogViewModel: DailyLogViewModel())
-    }
+// MARK: - Previews with In-Memory Data
+#Preview {
+//    {
+//        // Create in-memory container
+//        let container = try! ModelContainer(for: DailyLog.self, WeightLog.self, FoodItem.self)
+//        let context = container.mainContext
+//        
+//        // Seed mock data
+//        context.insert(DailyLog(name: "Banana", calories: 80, protein: 1, carbs: 22, fats: 0, mealType: "Snack", date: Date()))
+//        context.insert(DailyLog(name: "Oatmeal", calories: 150, protein: 5, carbs: 27, fats: 3, mealType: "Breakfast", date: Date()))
+//        
+//        context.insert(WeightLog(weight: 70, date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!))
+//        context.insert(WeightLog(weight: 69.5, date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!))
+//
+//        do {
+//            try context.save()
+//        } catch {
+//            print(error)
+//        }
+//        
+//        DashboardView(
+//            weightViewModel: WeightViewModel(context: context),
+//            dailyLogViewModel: DailyLogViewModel(context: context)
+//        )
+//        .modelContainer(container)
+//    }()
+}
     
     

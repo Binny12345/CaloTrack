@@ -1,15 +1,14 @@
 //
-//  FoodDetailView.swift
+//  ManualLogView.swift
 //  s4091285-a1
 //
-//  Created by Binyam Sisay on 20/8/2025.
+//  Created by Binyam Sisay on 6/9/2025.
 //
 
 import SwiftUI
 import SwiftData
 
-/// FoodDetailView to display the detailed information of each FoodItem
-struct FoodDetailView: View {
+struct ManualLogView: View {
     let foodItem: FoodItem
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
@@ -17,29 +16,28 @@ struct FoodDetailView: View {
     
     @State private var selectedMenuType: String = "Breakfast"
     @State private var servingSize: Double = 1.0
+    @State var foodName: String = ""
+    @State var calories: String = ""
+    @State var protein: String = ""
+    @State var carbs: String = ""
+    @State var fats: String = ""
     
     let options = ["Breakfast", "Lunch", "Dinner", "Snack"]
-    
-    init(foodItem: FoodItem,
-         dailyLogViewModel: DailyLogViewModel,
-    ) {
-        self.foodItem = foodItem
-        self._dailyLogViewModel = ObservedObject(initialValue: dailyLogViewModel)
 
-        // Seed state from passed-in food item
-        self._selectedMenuType = State(initialValue: foodItem.mealType)
-        self._servingSize = State(initialValue: 1.0)
-    }
     
     // Adjust nutrition based on serving size
     var adjustedFoodItem: FoodItem {
-        FoodItem(
-            id: foodItem.id,
-            name: foodItem.name,
-            calories: foodItem.calories * servingSize,
-            protein: foodItem.protein * servingSize,
-            carbs: foodItem.carbs * servingSize,
-            fats: foodItem.fats * servingSize,
+        let cals = Double(calories) ?? 0
+        let prot = Double(protein) ?? 0
+        let carb = Double(carbs) ?? 0
+        let fat = Double(fats) ?? 0
+        
+        return FoodItem (
+            name: foodName.isEmpty ? "Unnamed Food" : foodName,
+            calories: cals * servingSize,
+            protein: prot * servingSize,
+            carbs: carb * servingSize,
+            fats: fat * servingSize,
             mealType: selectedMenuType,
             date: Date()
         )
@@ -48,16 +46,23 @@ struct FoodDetailView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Title
-            Text(foodItem.name)
+            TextField("Food Item name", text: $foodName)
                 .font(.title)
                 .bold()
             
             // Base Info
-            Text("\(Int(foodItem.calories)) kcal (per serving)")
-                .font(.headline)
-            Text("\(Int(foodItem.protein)) g protein • \(Int(foodItem.carbs)) g carbs • \(Int(foodItem.fats)) g fats")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            VStack(alignment: .leading, spacing: 8) {
+                TextField("Calories", text: $calories)
+                    .keyboardType(.decimalPad)
+                TextField("Protein (g)", text: $protein)
+                    .keyboardType(.decimalPad)
+                TextField("Carbs (g)", text: $carbs)
+                    .keyboardType(.decimalPad)
+                TextField("Fats (g)", text: $fats)
+                    .keyboardType(.decimalPad)
+            }
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
             
             // Meal Picker
             VStack(alignment: .leading, spacing: 8) {
@@ -130,44 +135,14 @@ struct FoodDetailView: View {
 }
 
 #Preview {
-    let container = try! ModelContainer(for: DailyLog.self, FoodItem.self, WeightLog.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+    let container = try! ModelContainer(
+        for: DailyLog.self, FoodItem.self, WeightLog.self,
+        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+    )
     let context = container.mainContext
 
-    let sampleFood = FoodItem(
-        name: "Banana",
-        calories: 80,
-        protein: 1,
-        carbs: 22,
-        fats: 0,
-        mealType: "Snack",
-        date: Date()
-    )
-
-    return FoodDetailView(
-        foodItem: sampleFood,
+    ManualLogView(
         dailyLogViewModel: DailyLogViewModel(context: context)
     )
     .modelContainer(container)
-}
-
-// MARK: - Helper View for Nutrition Display
-/// Helper NutritionItem struct to display the individual macros within the HStack
-struct NutritionItem: View {
-    let label: String
-    let value: Int
-    let unit: String
-    
-    var body: some View {
-        VStack(spacing: 4) {
-            Text("\(value)")
-                .font(.title3)
-                .fontWeight(.bold)
-            Text(unit)
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-    }
 }

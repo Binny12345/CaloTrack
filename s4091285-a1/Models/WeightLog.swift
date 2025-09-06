@@ -8,10 +8,18 @@
 //
 
 import Foundation
+import SwiftData
 
 /// WeightLog needed to store the weight of the user
-struct WeightLog: Identifiable, Codable {
+@Model
+class WeightLog {
     var id = UUID()
     var weight: Double
     var date: Date
+    
+    init(id: UUID = UUID(), weight: Double, date: Date = Date()) {
+        self.id = id
+        self.weight = weight
+        self.date = date
+    }
 }

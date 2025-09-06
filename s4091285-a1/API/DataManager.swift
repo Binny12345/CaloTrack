@@ -9,24 +9,26 @@
 
 import Foundation
 
-/// DataManager needed to handle the food items in the respective JSON file
+/// DataManager needed to handle the food items from the API calls
 struct DataManager {
         
-    /// Loads the Data from the JSON file
-    static func loadFoodData() -> [FoodItem] {
-        
-        guard let url = Bundle.main.url(forResource: "Data", withExtension: "json") else {
-            print("JSON File not found")
-            return []
-        }
-        do {
-            let data = try Data(contentsOf: url)
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            return try decoder.decode([FoodItem].self, from: data)
-        } catch {
-            print("Error decoding JSON: \(error)")
-            return []
-        }
-    }
+
 }
+
+// Dummy code for accessing JSON data:
+//static func loadFoodData() -> [FoodItem] {
+//    
+//    guard let url = Bundle.main.url(forResource: "Data", withExtension: "json") else {
+//        print("JSON File not found")
+//        return []
+//    }
+//    do {
+//        let data = try Data(contentsOf: url)
+//        let decoder = JSONDecoder()
+//        decoder.dateDecodingStrategy = .iso8601
+//        return try decoder.decode([FoodItem].self, from: data)
+//    } catch {
+//        print("Error decoding JSON: \(error)")
+//        return []
+//    }
+//}
