@@ -13,6 +13,7 @@ struct SearchView: View {
     @State private var allFoods: [FoodItem] = []
     @State private var showingFoodDetail: Bool = false
     @State private var selectedFood: FoodItem? = nil
+    @State private var isShowingManualScreen: Bool = false
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
@@ -27,12 +28,12 @@ struct SearchView: View {
                 .bold()
             
             Button {
-                
+                isShowingManualScreen.toggle()
             } label: {
                 Text("Manual Log")
                 Image(systemName: "plus.circle")
             }
-            .sheet(item: $selectedFood) { item in
+            .sheet(isPresented: $isShowingManualScreen) {
                 ManualLogView(
                     dailyLogViewModel: dailyLogViewModel
                 )
@@ -51,6 +52,10 @@ struct SearchView: View {
                         .foregroundColor(.gray)
                     TextField("Search food...", text: $searchText)
                         .textFieldStyle(PlainTextFieldStyle())
+                        .onSubmit {
+                            // TODO: Connect this to API fetch
+                        }
+                    
                 }
                 .padding(10)
                 .background(Color(.systemGray6))

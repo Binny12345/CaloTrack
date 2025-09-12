@@ -11,22 +11,43 @@ import SwiftData
 
 /// DailyLogViewModel needed to store all the functionality of the SearchView and FoodDetailView
 class DailyLogViewModel: ObservableObject {
+    
     private var context: ModelContext
     @Published var dailyLogs: [DailyLog] = []
     
     /// Initialises the class with the context from DailyLog Model
+    /// - Parameter context: Grabbing the context from CaloTrackApp.Swift to make the data persistent
     init(context: ModelContext) {
         self.context = context
-        fetchLogs()
+        fetchTodaysLogs()
     }
-    
+      
     /// Fetches for all logs
-    func fetchLogs() {
-        let descriptor = FetchDescriptor<DailyLog>()
+    func fetchTodaysLogs() {
+        let today = Calendar.current.startOfDay(for: Date())
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) ?? today.addingTimeInterval(86400)
+        
+        let descriptor = FetchDescriptor<DailyLog>(
+            predicate: #Predicate { log in
+                log.date >= today && log.date < tomorrow
+            }
+        )
         do {
             dailyLogs = try context.fetch(descriptor)
         } catch {
-            print("Failed to fetch daily logs: \(error)")
+            print("Failed to fetch today's logs: \(error)")
+            dailyLogs = []
+        }
+    }
+    
+    func fetchAllLogsDescending() {
+        let descriptor = FetchDescriptor<DailyLog>(
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+        do {
+            dailyLogs = try context.fetch(descriptor)
+        } catch {
+            print("Failed to fetch all logs: \(error)")
             dailyLogs = []
         }
     }
@@ -47,7 +68,7 @@ class DailyLogViewModel: ObservableObject {
         
         context.insert(logEntry)
         saveContext()
-        fetchLogs()
+        fetchTodaysLogs()
         print("Successfully added \(foodItem.name) to daily log.")
     }
     
@@ -57,9 +78,20 @@ class DailyLogViewModel: ObservableObject {
         if let logToDelete = dailyLogs.first(where: { $0.id == id }) {
             context.delete(logToDelete)
             saveContext()
-            fetchLogs()
+            fetchTodaysLogs()
             
             print("Successfully removed 1 food item from daily log.")
+        }
+    }
+    
+    /// Variable that stores all of the logs for the day
+    var todaysLogs: [DailyLog] {
+        let today = Calendar.current.startOfDay(for: Date())
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+
+        return dailyLogs.filter { log in
+            guard log.date >= today && log.date < tomorrow else { return false }
+            return true
         }
     }
     
@@ -69,19 +101,10 @@ class DailyLogViewModel: ObservableObject {
             context.delete(log)
         }
         saveContext()
-        fetchLogs()
+        fetchTodaysLogs()
         print("All logs cleared!")
     }
     
-    /// Variable that stores all of the logs for the day
-    var todaysLogs: [DailyLog] {
-        let today = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)
-        
-        return dailyLogs.filter { log in
-            log.date >= today && log.date < tomorrow!
-        }
-    }
     /// Saves the context of DailyLogs
     private func saveContext() {
         do {

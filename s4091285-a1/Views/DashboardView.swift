@@ -15,32 +15,41 @@ struct DashboardView: View {
     
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
+    @ObservedObject var userProfileViewModel: UserProfileViewModel
     
     var totalCalories: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.calories })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
+            sum + (log.calories)
+        })
     }
     
     var totalProtein: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.protein })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
+            sum + (log.protein)
+        })
     }
     
     var totalCarbs: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.carbs })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
+            sum + (log.carbs)
+        })
     }
     
     var totalFats: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { $0 + $1.fats })
+        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
+            sum + (log.fats)
+        })
     }
     
-    // TODO: Connect this to data inputted by user
-    var proteinGoal = 150
-    var fatGoal = 100
-    var carbsGoal = 300
-    var weightGoal = 50
-    let userName = "User"
     
     var body: some View {
-        let progress = Double(totalCalories) / 2000.0
+        let calories = userProfileViewModel.currentUser?.calorieBudget ?? 1800
+        let progress = Double(totalCalories) / Double(calories)
+        let proteinGoal = userProfileViewModel.currentUser?.proteinGoal ?? 100
+        let fatGoal = userProfileViewModel.currentUser?.fatGoal ?? 100
+        let carbsGoal = userProfileViewModel.currentUser?.carbGoal ?? 100
+        let weightGoal = 50
+        let userName = userProfileViewModel.currentUser?.name ?? "User"
         
         ScrollView {
             VStack(spacing: 20) {
@@ -107,7 +116,7 @@ struct DashboardView: View {
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.secondary)
-                            Text("2000 kcal")
+                            Text("\(calories) kcal")
                                 .font(.title3)
                                 .fontWeight(.bold)
                         }
@@ -118,13 +127,13 @@ struct DashboardView: View {
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.secondary)
-                            if totalCalories > 2000 {
-                                Text("\(2000 - totalCalories) kcal")
+                            if totalCalories > calories {
+                                Text("\(calories - totalCalories) kcal")
                                     .font(.title3)
                                     .fontWeight(.bold)
                                     .foregroundColor(.red)
                             } else {
-                                Text("\(2000 - totalCalories) kcal")
+                                Text("\(calories - totalCalories) kcal")
                                     .font(.title3)
                                     .fontWeight(.bold)
                                     .foregroundColor(.green)

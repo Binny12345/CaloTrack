@@ -10,6 +10,9 @@ Binyam Sisay (s4091285)
 ### GitHub URL
 https://github.com/rmit-iPSE-s2-2025/a1-s4091285
 
+### Miro Board
+https://miro.com/app/board/uXjVJNb32mw=/?share_link_id=762810969982
+
 
 ## Features
 - **Dashboard** – View daily calorie budget, consumed calories, macros, and weight progress at a glance.
@@ -33,4 +36,5 @@ https://developer.apple.com/documentation/swift/
 - Can you help me in configuring the Custom Layout for my app
 - How can i effectively pass my data from the weight logs into the dashboard for viewing
 - Can you try to figure out the bug
+- Can you provide the steps on how i can connect the business logic for onboarding to my contentView
 - (Note: Code provided wasn't copy and pasted, used as a guide and reference)

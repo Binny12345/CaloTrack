@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ManualLogView: View {
-    let foodItem: FoodItem
+    let foodItem: FoodItem? = nil
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
@@ -46,19 +46,19 @@ struct ManualLogView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Title
-            TextField("Food Item name", text: $foodName)
+            TextField("Food Item Name", text: $foodName)
                 .font(.title)
                 .bold()
             
             // Base Info
             VStack(alignment: .leading, spacing: 8) {
-                TextField("Calories", text: $calories)
+                TextField("Enter Calories", text: $calories)
                     .keyboardType(.decimalPad)
-                TextField("Protein (g)", text: $protein)
+                TextField("Enter Protein (g)", text: $protein)
                     .keyboardType(.decimalPad)
-                TextField("Carbs (g)", text: $carbs)
+                TextField("Enter Carbs (g)", text: $carbs)
                     .keyboardType(.decimalPad)
-                TextField("Fats (g)", text: $fats)
+                TextField("Enter Fats (g)", text: $fats)
                     .keyboardType(.decimalPad)
             }
             .font(.subheadline)
@@ -126,9 +126,11 @@ struct ManualLogView: View {
                 .cornerRadius(10)
             }
         }
-        .task(id: foodItem.id) {
-            selectedMenuType = foodItem.mealType
-            servingSize = 1.0
+        .task {
+            if let foodItem = foodItem {
+                selectedMenuType = foodItem.mealType
+                servingSize = 1.0
+            }
         }
         .padding()
     }

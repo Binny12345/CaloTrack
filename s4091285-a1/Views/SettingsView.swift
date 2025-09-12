@@ -23,8 +23,8 @@ struct SettingsView: View {
                 .foregroundStyle(.green)
                     
                 
-                Button("Historical Data") {
-                    // Link to Data page
+                NavigationLink(destination: HistoricalDataView(dailyLogViewModel: dailyLogViewModel)) {
+                    Text("Historical Data")
                 }
                 .foregroundStyle(.green)
             }

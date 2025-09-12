@@ -13,13 +13,14 @@ struct CaloTrackApp: App {
     let container: ModelContainer
     
     init() {
-        container = try! ModelContainer(for: DailyLog.self, FoodItem.self, WeightLog.self)
+        container = try! ModelContainer(for: DailyLog.self, FoodItem.self, WeightLog.self, UserProfile.self)
     }
     var body: some Scene {
         WindowGroup {
             ContentView(
                 dailyLogViewModel: DailyLogViewModel(context: container.mainContext),
-                weightViewModel: WeightViewModel(context: container.mainContext)
+                weightViewModel: WeightViewModel(context: container.mainContext),
+                userProfileViewModel: UserProfileViewModel(context: container.mainContext),
             )
             .modelContainer(container)
             .preferredColorScheme(.dark)
