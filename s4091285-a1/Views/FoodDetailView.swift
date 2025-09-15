@@ -130,7 +130,7 @@ struct FoodDetailView: View {
 }
 
 #Preview {
-    let container = try! ModelContainer(for: DailyLog.self, FoodItem.self, WeightLog.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+    let container = try! ModelContainer(for: FoodItem.self, WeightLog.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
     let context = container.mainContext
 
     let sampleFood = FoodItem(

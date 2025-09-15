@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// SearchView for the user to search for their desired FoodItem (Currently hardcoded, will later use API)
+/// SearchView for the user to search for their desired FoodItem
 struct SearchView: View {
     @State private var searchText = ""
     @State private var allFoods: [FoodSearchResult] = []
@@ -53,8 +53,24 @@ struct SearchView: View {
             VStack(alignment: .leading, spacing: 16) {
                 
                 HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
+                    Button {
+                        guard !searchText.isEmpty else {
+                            allFoods = []
+                            return
+                        }
+                        isLoading = true
+                        OpenFoodFactsAPI.shared.searchFoods(query: searchText) { results in
+                            DispatchQueue.main.async {
+                                self.allFoods = results
+                                self.isLoading = false
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
+                    }
+                    .padding(5)
+                    
                     TextField("Search food...", text: $searchText)
                         .textFieldStyle(PlainTextFieldStyle())
                     
@@ -111,22 +127,6 @@ struct SearchView: View {
                     .padding(.horizontal)
                 }
             }
-                /// Connects to OFF API and fetches results
-                .onChange(of: searchText) { oldValue, newValue in
-                    guard !newValue.isEmpty else {
-                        allFoods = []
-                        return
-                    }
-                    isLoading = true
-                    OpenFoodFactsAPI.shared.searchFoods(query: newValue) { results in
-                        DispatchQueue.main.async {
-                            self.allFoods = results
-                            self.isLoading = false
-                        }
-                    }
-                    
-                }
-                .padding(.top)
             }
             .sheet(item: $selectedFood) { item in
                 FoodDetailView(
@@ -138,6 +138,7 @@ struct SearchView: View {
     }
 }
 
+/// Displays each food item fetched from the API in a modular row component
 struct FoodResultRow: View {
     let food: FoodSearchResult
     var onAdd: () -> Void

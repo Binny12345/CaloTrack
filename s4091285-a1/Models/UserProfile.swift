@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 
+/// UserProfile stores the details of the registered user
 @Model
 class UserProfile {
     var id: UUID
@@ -20,6 +21,7 @@ class UserProfile {
     var proteinGoal: Int
     var carbGoal: Int
     var fatGoal: Int
+    var weightGoal: Int
     
     init(
         id: UUID = UUID(),
@@ -31,7 +33,8 @@ class UserProfile {
         calorieBudget: Int,
         proteinGoal: Int,
         carbGoal: Int,
-        fatGoal: Int
+        fatGoal: Int,
+        weightGoal: Int
     ) {
         self.id = id
         self.name = name
@@ -43,5 +46,6 @@ class UserProfile {
         self.proteinGoal = proteinGoal
         self.carbGoal = carbGoal
         self.fatGoal = fatGoal
+        self.weightGoal = weightGoal
     }
 }

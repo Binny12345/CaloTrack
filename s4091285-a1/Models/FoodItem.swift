@@ -10,7 +10,7 @@
 import Foundation
 import SwiftData
 
-/// FoodItem needed to store data of each food item
+/// FoodItem is used to store data of each food item and items logged by the user
 @Model
 class FoodItem {
     var id = UUID()

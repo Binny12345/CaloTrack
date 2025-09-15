@@ -15,7 +15,7 @@ class OpenFoodFactsAPI {
     func searchFoods(query: String, completion: @escaping ([FoodSearchResult]) -> Void) {
         
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let url = URL(string: "https://world.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1")
+              let url = URL(string: "https://world.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=10")
         else {
             completion([])
             return

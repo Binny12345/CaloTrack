@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-/// AllMealsView needed to display all of the user's logged meals for the day
+/// AllMealsView displays all of the user's logged meals for the day
 struct AllMealsView: View {
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
     /// Groups meals by their mealType
-    var groupedMeals: [String: [DailyLog]] {
+    var groupedMeals: [String: [FoodItem]] {
         Dictionary(grouping: dailyLogViewModel.dailyLogs, by: { $0.mealType })
     }
     
@@ -46,10 +46,12 @@ struct AllMealsView: View {
     }
 }
 
-/// FoodItemCard to display each individual food item
+/// FoodItemCard displays each individual food item
 struct FoodItemCard: View {
+    
+    
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
-    let foods: [DailyLog]
+    let foods: [FoodItem]
     
     var body: some View {
         VStack(spacing: 8) {

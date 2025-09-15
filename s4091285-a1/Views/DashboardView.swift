@@ -48,7 +48,7 @@ struct DashboardView: View {
         let proteinGoal = userProfileViewModel.currentUser?.proteinGoal ?? 100
         let fatGoal = userProfileViewModel.currentUser?.fatGoal ?? 100
         let carbsGoal = userProfileViewModel.currentUser?.carbGoal ?? 100
-        let weightGoal = 50
+        let weightGoal = userProfileViewModel.currentUser?.weightGoal ?? 50
         let userName = userProfileViewModel.currentUser?.name ?? "User"
         
         ScrollView {
@@ -232,30 +232,7 @@ struct DashboardView: View {
     
 // MARK: - Previews with In-Memory Data
 #Preview {
-//    {
-//        // Create in-memory container
-//        let container = try! ModelContainer(for: DailyLog.self, WeightLog.self, FoodItem.self)
-//        let context = container.mainContext
-//        
-//        // Seed mock data
-//        context.insert(DailyLog(name: "Banana", calories: 80, protein: 1, carbs: 22, fats: 0, mealType: "Snack", date: Date()))
-//        context.insert(DailyLog(name: "Oatmeal", calories: 150, protein: 5, carbs: 27, fats: 3, mealType: "Breakfast", date: Date()))
-//        
-//        context.insert(WeightLog(weight: 70, date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!))
-//        context.insert(WeightLog(weight: 69.5, date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!))
-//
-//        do {
-//            try context.save()
-//        } catch {
-//            print(error)
-//        }
-//        
-//        DashboardView(
-//            weightViewModel: WeightViewModel(context: context),
-//            dailyLogViewModel: DailyLogViewModel(context: context)
-//        )
-//        .modelContainer(container)
-//    }()
+
 }
     
     

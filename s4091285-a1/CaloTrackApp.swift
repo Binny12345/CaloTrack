@@ -13,7 +13,7 @@ struct CaloTrackApp: App {
     let container: ModelContainer
     
     init() {
-        container = try! ModelContainer(for: DailyLog.self, FoodItem.self, WeightLog.self, UserProfile.self)
+        container = try! ModelContainer(for: FoodItem.self, WeightLog.self, UserProfile.self)
     }
     var body: some Scene {
         WindowGroup {

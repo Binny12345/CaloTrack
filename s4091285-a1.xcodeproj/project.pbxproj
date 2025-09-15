@@ -16,9 +16,6 @@
 			membershipExceptions = (
 				Info.plist,
 			);
-			platformFiltersByRelativePath = {
-				API/Data.json = (ios, );
-			};
 			target = 33A0E5202E44785B001A70B2 /* s4091285-a1 */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -48,8 +45,8 @@
 		33A0E5182E44785B001A70B2 = {
 			isa = PBXGroup;
 			children = (
-				33A0E5232E44785B001A70B2 /* s4091285-a1 */,
 				33A0E5222E44785B001A70B2 /* Products */,
+				33A0E5232E44785B001A70B2 /* s4091285-a1 */,
 			);
 			sourceTree = "<group>";
 		};
@@ -296,7 +293,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 396Z3UWA3M;
+				DEVELOPMENT_TEAM = B7YSYBUGF2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "s4091285-a1/Info.plist";
@@ -327,7 +324,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 396Z3UWA3M;
+				DEVELOPMENT_TEAM = B7YSYBUGF2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "s4091285-a1/Info.plist";

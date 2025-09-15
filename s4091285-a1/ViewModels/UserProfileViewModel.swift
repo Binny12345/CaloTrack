@@ -30,7 +30,8 @@ class UserProfileViewModel: ObservableObject {
                  _ calorieBudget: String,
                  _ proteinGoal: String,
                  _ carbGoal: String,
-                 _ fatGoal: String
+                 _ fatGoal: String,
+                 _ weightGoal: String
     ) {
         let user = UserProfile(
             name: name,
@@ -41,7 +42,8 @@ class UserProfileViewModel: ObservableObject {
             calorieBudget: Int(calorieBudget) ?? 0,
             proteinGoal: Int(proteinGoal) ?? 0,
             carbGoal: Int(carbGoal) ?? 0,
-            fatGoal: Int(fatGoal) ?? 0
+            fatGoal: Int(fatGoal) ?? 0,
+            weightGoal: Int(weightGoal) ?? 0
         )
         
         context.insert(user)

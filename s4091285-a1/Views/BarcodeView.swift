@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// BarcodeView for the user to scan the barcode of their food item
+/// BarcodeView letsr the user to scan the barcode of a food item in order to log it 
 struct BarcodeView: View {
     var body: some View {
         Text("To be added in Assignment 2.")

@@ -17,6 +17,7 @@ struct FormView: View {
     @State private var proteinGoal: String = ""
     @State private var carbGoal: String = ""
     @State private var fatGoal: String = ""
+    @State private var weightGoal: String = ""
     @State private var calorieBudget: String = ""
     @State private var showAlert: Bool = false
     @State private var errorMsg: String = ""
@@ -73,7 +74,13 @@ struct FormView: View {
                         .keyboardType(.numberPad)
                     TextField("Fat Goal (g)", text: $fatGoal)
                         .keyboardType(.numberPad)
-                    
+                }
+            }
+            
+            Section("Weight Goal") {
+                List {
+                    TextField("Enter Your Weight Goal (g)", text: $weightGoal)
+                        .keyboardType(.numberPad)
                 }
             }
         }
@@ -91,7 +98,7 @@ struct FormView: View {
                 showAlert.toggle()
             } else {
                 showWelcomeMessage = true
-                userProfileViewModel.addUser(name, age, gender, weight, height, calorieBudget, proteinGoal, carbGoal, fatGoal)
+                userProfileViewModel.addUser(name, age, gender, weight, height, calorieBudget, proteinGoal, carbGoal, fatGoal, weightGoal)
             }
             
         }.alert("Alert", isPresented: $showAlert, actions: {

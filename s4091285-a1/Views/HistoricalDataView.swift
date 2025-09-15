@@ -11,7 +11,7 @@ import SwiftData
 struct HistoricalDataView: View {
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
-    private var groupedLogs: [(date: Date, logs: [DailyLog])] {
+    private var groupedLogs: [(date: Date, logs: [FoodItem])] {
         let grouped = Dictionary(grouping: dailyLogViewModel.dailyLogs) { log in
             Calendar.current.startOfDay(for: log.date)
         }
@@ -60,12 +60,12 @@ struct HistoricalDataView: View {
 }
 
 #Preview {
-    let container = try! ModelContainer(for: DailyLog.self)
+    let container = try! ModelContainer(for: FoodItem.self)
     let vm = DailyLogViewModel(context: container.mainContext)
     
     vm.dailyLogs = [
-        DailyLog(name: "Chicken Breast", calories: 220, protein: 40, carbs: 0, fats: 5, mealType: "Lunch", date: Date()),
-                DailyLog(name: "Oatmeal", calories: 150, protein: 5, carbs: 27, fats: 3, mealType: "Breakfast", date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!)
+        FoodItem(name: "Chicken Breast", calories: 220, protein: 40, carbs: 0, fats: 5, mealType: "Lunch", date: Date()),
+        FoodItem(name: "Oatmeal", calories: 150, protein: 5, carbs: 27, fats: 3, mealType: "Breakfast", date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!)
             ]
             
             return HistoricalDataView(dailyLogViewModel: vm)

@@ -13,7 +13,7 @@ import SwiftData
 class DailyLogViewModel: ObservableObject {
     
     private var context: ModelContext
-    @Published var dailyLogs: [DailyLog] = []
+    @Published var dailyLogs: [FoodItem] = []
     
     /// Initialises the class with the context from DailyLog Model
     /// - Parameter context: Grabbing the context from CaloTrackApp.Swift to make the data persistent
@@ -27,7 +27,7 @@ class DailyLogViewModel: ObservableObject {
         let today = Calendar.current.startOfDay(for: Date())
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) ?? today.addingTimeInterval(86400)
         
-        let descriptor = FetchDescriptor<DailyLog>(
+        let descriptor = FetchDescriptor<FoodItem>(
             predicate: #Predicate { log in
                 log.date >= today && log.date < tomorrow
             }
@@ -41,7 +41,7 @@ class DailyLogViewModel: ObservableObject {
     }
     
     func fetchAllLogsDescending() {
-        let descriptor = FetchDescriptor<DailyLog>(
+        let descriptor = FetchDescriptor<FoodItem>(
             sortBy: [SortDescriptor(\.date, order: .reverse)]
         )
         do {
@@ -56,7 +56,7 @@ class DailyLogViewModel: ObservableObject {
     /// - Parameter foodItem: The selected food item the user chose
     /// - Parameter mealType: What type of meal is the food item
     func addFoodToLog(foodItem: FoodItem, mealType: String = "Snack") {
-        let logEntry = DailyLog(
+        let logEntry = FoodItem(
             name: foodItem.name,
             calories: foodItem.calories,
             protein: foodItem.protein,
@@ -85,7 +85,7 @@ class DailyLogViewModel: ObservableObject {
     }
     
     /// Variable that stores all of the logs for the day
-    var todaysLogs: [DailyLog] {
+    var todaysLogs: [FoodItem] {
         let today = Calendar.current.startOfDay(for: Date())
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
 

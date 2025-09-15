@@ -2,7 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>interface style</key>
-	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>s4091285_a1</string>
+	<key>CFBundleName</key>
+	<string>s4091285_a1</string>
 </dict>
 </plist>
