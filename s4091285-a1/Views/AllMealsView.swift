@@ -59,7 +59,7 @@ struct FoodItemCard: View {
                         Text(food.name)
                             .font(.body)
                             .fontWeight(.medium)
-                        Text("\(Int(food.calories)) kcal • \(Int(food.protein))g Protein")
+                        Text("\(Int(food.calories)) kcal • \(Int(food.protein))g P • \(Int(food.carbs))g C • \(Int(food.fats))g F")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

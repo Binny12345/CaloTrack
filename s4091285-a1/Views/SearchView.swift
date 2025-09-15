@@ -10,14 +10,19 @@ import SwiftUI
 /// SearchView for the user to search for their desired FoodItem (Currently hardcoded, will later use API)
 struct SearchView: View {
     @State private var searchText = ""
-    @State private var allFoods: [FoodItem] = []
+    @State private var allFoods: [FoodSearchResult] = []
     @State private var showingFoodDetail: Bool = false
     @State private var selectedFood: FoodItem? = nil
     @State private var isShowingManualScreen: Bool = false
+    @State private var isLoading: Bool = false
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
-    var filteredFoods: [FoodItem] { allFoods }
+    var filteredFoods: [FoodSearchResult] {
+        allFoods.filter { food in
+            searchText.isEmpty || food.name.localizedCaseInsensitiveContains(searchText)
+        }
+    }
     
     // MARK: - Search Bar
     var body: some View {
@@ -52,9 +57,6 @@ struct SearchView: View {
                         .foregroundColor(.gray)
                     TextField("Search food...", text: $searchText)
                         .textFieldStyle(PlainTextFieldStyle())
-                        .onSubmit {
-                            // TODO: Connect this to API fetch
-                        }
                     
                 }
                 .padding(10)
@@ -87,45 +89,42 @@ struct SearchView: View {
                     .font(.headline)
                     .padding(.horizontal)
                 ScrollView {
+                    if isLoading {
+                        ProgressView("Searching...")
+                            .padding(.init(top: 150, leading: 150, bottom: 150, trailing: 150))
+                } else {
                     LazyVStack(spacing: 12) {
                         ForEach(filteredFoods) { food in
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(food.name)
-                                        .font(.body)
-                                        .fontWeight(.medium)
-                                    Text("\(Int(food.calories)) kcal • \(Int(food.protein))g Protein")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                Button {
-                                    selectedFood = food
-                                    showingFoodDetail = true
-                                } label: {
-                                    Image(systemName: "plus.circle.fill")
-                                        .font(.title2)
-                                        .foregroundColor(.green)
-                                }
+                            FoodResultRow(food: food) {
+                                selectedFood = FoodItem(
+                                    name: food.name,
+                                    calories: food.calories,
+                                    protein: food.protein,
+                                    carbs: food.carbs,
+                                    fats: food.fats,
+                                    mealType: "Snack",
+                                    date: Date()
+                                )
                             }
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(10)
-                            .shadow(radius: 1)
                         }
                     }
                     .padding(.horizontal)
                 }
+            }
+                /// Connects to OFF API and fetches results
                 .onChange(of: searchText) { oldValue, newValue in
                     guard !newValue.isEmpty else {
                         allFoods = []
                         return
                     }
-                    FatSecretAPI.shared.searchFoods(query: newValue) { results in
+                    isLoading = true
+                    OpenFoodFactsAPI.shared.searchFoods(query: newValue) { results in
                         DispatchQueue.main.async {
                             self.allFoods = results
+                            self.isLoading = false
                         }
                     }
+                    
                 }
                 .padding(.top)
             }
@@ -139,8 +138,30 @@ struct SearchView: View {
     }
 }
 
-//#Preview {
-//    @Previewable @StateObject var mockDailyLogViewModel = DailyLogViewModel()
-//    
-//    SearchView(dailyLogViewModel: mockDailyLogViewModel)
-//}
+struct FoodResultRow: View {
+    let food: FoodSearchResult
+    var onAdd: () -> Void
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(food.name)
+                    .font(.body)
+                    .fontWeight(.medium)
+                Text("\(Int(food.calories)) kcal • \(Int(food.protein))g Protein")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+            Button(action: onAdd) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.green)
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+        .shadow(radius: 1)
+    }
+}

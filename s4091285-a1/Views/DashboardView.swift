@@ -169,7 +169,8 @@ struct DashboardView: View {
                     
                     VStack(alignment: .leading) {
                         Text("Protein: \(totalProtein)g / \(proteinGoal)g")
-                        ProgressView(value: Double(totalProtein), total: Double(proteinGoal))
+                        ProgressView(value: min(Double(totalProtein), Double(proteinGoal)),
+                                     total: Double(proteinGoal))
                             .tint(.green)
                     }
                     
