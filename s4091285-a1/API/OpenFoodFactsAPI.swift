@@ -70,8 +70,8 @@ class OpenFoodFactsAPI {
             }
             
             do {
-                let response = try JSONDecoder().decode([String: OFFProduct].self, from: data)
-                if let product = response["product"],
+                let response = try JSONDecoder().decode(OFFProductResponse.self, from: data)
+                if let product = response.product,
                    let name = product.product_name {
                     
                     let item = FoodSearchResult(
@@ -116,6 +116,12 @@ struct OFFSearchResponse: Codable {
 struct OFFProduct: Codable {
     let product_name: String?
     let nutriments: Nutriments?
+}
+
+struct OFFProductResponse: Codable {
+    let status: Int
+    let code: String
+    let product: OFFProduct?
 }
 
 struct Nutriments: Codable {

@@ -21,17 +21,18 @@ This Documentation will serve as a guide to navigating this project.
 - ``WeightViewModel``
 
 ## Views
-- ``DashboardView``
 - ``AllMealsView``
-- ``SearchView``
-- ``FoodDetailView``
 - ``BarcodeView``
 - ``ContentView``
 - ``CustomLayoutView``
+- ``DashboardView``
+- ``FoodDetailView``
 - ``FormView``
 - ``HistoricalDataView``
+- ``MacroCardView``
 - ``ManualLogView``
 - ``OnboardingView``
+- ``SearchView``
+- ``ScannerView``
 - ``SettingsView``
 - ``WeightInputView``
-- ``MacroCardView``

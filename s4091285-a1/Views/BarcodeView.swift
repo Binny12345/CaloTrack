@@ -11,6 +11,11 @@ struct BarcodeView: View {
     
     @State private var scannedBarcode: String = ""
     @State private var alertItem: AlertItem?
+    @State private var product: FoodSearchResult? = nil
+    
+    @ObservedObject var dailyLogViewModel: DailyLogViewModel
+    
+    @State private var item: FoodItem? = nil
     
     var body: some View {
         NavigationView {
@@ -26,11 +31,43 @@ struct BarcodeView: View {
                     .font(.title)
                     .padding()
                 
-                Text(scannedBarcode.isEmpty ? "Not Yet Scanned" : "Search")
-                    .bold()
-                    .font(.largeTitle)
-                    .foregroundStyle(.green)
-                    .padding()
+                if scannedBarcode.isEmpty {
+                    Text("Not Yet Scanned")
+                        .bold()
+                        .font(.largeTitle)
+                        .foregroundStyle(.green)
+                        .padding()
+                } else {
+                    Button {
+                        OpenFoodFactsAPI.shared.fetchProduct(by: scannedBarcode) { result in
+                            DispatchQueue.main.async {
+                                self.product = result
+                            }
+                            item = FoodItem(
+                                name: result?.name ?? "",
+                                calories: result?.calories ?? 0,
+                                protein: result?.protein ?? 0,
+                                carbs: result?.carbs ?? 0,
+                                fats: result?.fats ?? 0,
+                                mealType: result?.mealType ?? "Snack",
+                                date: result?.date ?? Date()
+                            )
+                        }
+                        
+                    } label: {
+                        Text("Search")
+                    }
+                    .frame(width: 100, height: 40)
+                    .background(.green)
+                    .foregroundStyle(.white)
+                    .cornerRadius(10)
+                }
+            }
+            .sheet(item: $item) { item in
+                FoodDetailView(
+                    foodItem: item,
+                    dailyLogViewModel: dailyLogViewModel
+                )
             }
             .navigationTitle("Barcode Scanner")
             .alert(item: $alertItem) { alertItem in
@@ -45,6 +82,3 @@ struct BarcodeView: View {
     }
 }
 
-#Preview {
-    BarcodeView()
-}

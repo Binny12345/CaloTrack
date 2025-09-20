@@ -52,7 +52,7 @@ struct MainTabView: View {
                             }
                             .tag(0)
                         
-                        BarcodeView()
+                        BarcodeView(dailyLogViewModel: dailyLogViewModel)
                             .tabItem {
                                 Image(systemName: "barcode.viewfinder")
                                 Text("Barcode")

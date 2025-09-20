@@ -53,7 +53,7 @@ struct FoodDetailView: View {
                 .bold()
             
             // Base Info
-            Text("\(Int(foodItem.calories)) kcal (per serving)")
+            Text("\(Int(foodItem.calories)) kcal (per serving or 100g/100ml)")
                 .font(.headline)
             Text("\(Int(foodItem.protein)) g protein • \(Int(foodItem.carbs)) g carbs • \(Int(foodItem.fats)) g fats")
                 .font(.subheadline)

@@ -113,7 +113,6 @@ extension BarcodeViewController: AVCaptureMetadataOutputObjectsDelegate {
             return
         }
         
-        captureSession.stopRunning()                // Stops it from constantly re-scanning the same barcode
         scannerDelegate?.didFind(barcode: barcode)  // Sends it back to the Delegate
     }
 }
