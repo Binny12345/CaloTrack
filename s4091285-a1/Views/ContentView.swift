@@ -91,6 +91,12 @@ struct MainTabView: View {
     }
 }
 
+extension UIApplication {
+    func endEditingMode() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
 //struct appPreviews: PreviewProvider {
 //    static var previews: some View {
 //        ContentView(dailyLogViewModel: dailyLogViewModel, weightViewModel: weightViewModel)

@@ -16,6 +16,7 @@ struct DashboardView: View {
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @ObservedObject var userProfileViewModel: UserProfileViewModel
+    @StateObject private var macroCardVM = MacroCardViewModel()
     
     var totalCalories: Int {
         Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
@@ -108,33 +109,33 @@ struct DashboardView: View {
                         .frame(width: 120, height: 120)
                         .padding(.leading, 4)
                         
-                        Spacer()
+                        //Spacer()
                         
                         // Text Info
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Daily Goal")
+                            Text("Budget")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.secondary)
                             Text("\(calories) kcal")
-                                .font(.title3)
+                                .font(.headline)
                                 .fontWeight(.bold)
                         }
                         
                         // Remaining Section
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Remaining")
+                            Text("Left")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.secondary)
                             if totalCalories > calories {
                                 Text("\(calories - totalCalories) kcal")
-                                    .font(.title3)
+                                    .font(.headline)
                                     .fontWeight(.bold)
                                     .foregroundColor(.red)
                             } else {
                                 Text("\(calories - totalCalories) kcal")
-                                    .font(.title3)
+                                    .font(.headline)
                                     .fontWeight(.bold)
                                     .foregroundColor(.green)
                             }
@@ -142,18 +143,19 @@ struct DashboardView: View {
                     }
                     
                     NavigationLink(destination: AllMealsView(dailyLogViewModel: dailyLogViewModel)) {
-                        VStack(spacing: 4) {
+                        VStack(alignment: .trailing, spacing: 4) {
                             Text("All Meals")
-                                .frame(width: 80, height: 50)
+                                .frame(width: 100, height: 30)
+                                .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .background(.green)
                                 .foregroundStyle(.white)
-                                .cornerRadius(8)
+                                .cornerRadius(5)
                         }
-                        .frame(width: 100, height: 60)
+                        .frame(width: 100, height: 40)
                         .background(.green)
                         .foregroundStyle(.white)
-                        .cornerRadius(12)
+                        .cornerRadius(10)
                     }
                 }
                 .padding(20)
@@ -162,33 +164,35 @@ struct DashboardView: View {
                 .shadow(radius: 1)
                 
                 // MARK: - Macros
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .center, spacing: 12) {
                     Text("Macronutrients")
                         .font(.headline)
                         .bold()
                     
-                    VStack(alignment: .leading) {
-                        Text("Protein: \(totalProtein)g / \(proteinGoal)g")
-                        ProgressView(value: min(Double(totalProtein), Double(proteinGoal)),
-                                     total: Double(proteinGoal))
-                            .tint(.green)
+                    HStack(alignment: .firstTextBaseline) {
+                        MacroCardView(viewModel: macroCardVM)
+                            .onAppear {
+                                macroCardVM.update(
+                                    protein: totalProtein,
+                                    carbs: totalCarbs,
+                                    fats: totalFats,
+                                    proteinGoal: proteinGoal,
+                                    carbsGoal: carbsGoal,
+                                    fatsGoal: fatGoal
+                                )
+                            }
+                            .onChange(of: dailyLogViewModel.todaysLogs) { _, _ in
+                                macroCardVM.update(
+                                    protein: totalProtein,
+                                    carbs: totalCarbs,
+                                    fats: totalFats,
+                                    proteinGoal: proteinGoal,
+                                    carbsGoal: carbsGoal,
+                                    fatsGoal: fatGoal
+                                )
+                            }
                     }
-                    
-                    Divider()
-                    
-                    VStack(alignment: .leading) {
-                        Text("Carbs: \(totalCarbs)g / \(carbsGoal)g")
-                        ProgressView(value: Double(totalCarbs), total: Double(carbsGoal))
-                            .tint(.green)
-                    }
-                    
-                    Divider()
-                    
-                    VStack(alignment: .leading) {
-                        Text("Fats: \(totalFats)g / \(fatGoal)g")
-                        ProgressView(value: Double(totalFats), total: Double(fatGoal))
-                            .tint(.green)
-                    }
+
                 }
                 .padding()
                 .background(Color(.systemGray6))

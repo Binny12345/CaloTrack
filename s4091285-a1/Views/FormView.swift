@@ -21,7 +21,7 @@ struct FormView: View {
     @State private var calorieBudget: String = ""
     @State private var showAlert: Bool = false
     @State private var errorMsg: String = ""
-    @State private var showWelcomeMessage: Bool = false
+    //@State private var showWelcomeMessage: Bool = false
     
     @ObservedObject var userProfileViewModel: UserProfileViewModel
     @ObservedObject var weightViewModel: WeightViewModel
@@ -45,6 +45,7 @@ struct FormView: View {
                     TextField("Name", text: $name)
                     TextField("Age", text: $age)
                         .keyboardType(.numberPad)
+                    
                     
                     Picker("Gender", selection: $gender) {
                         ForEach(genders, id: \.self) { gender in
@@ -84,6 +85,9 @@ struct FormView: View {
                 }
             }
         }
+        .onTapGesture {
+            UIApplication.shared.endEditingMode()
+        }
         
         Text("Recommended Budget Based On Your Stats: \n\(recommendedBudget(age, weight, height, gender))kcal")
             .frame(alignment: .center)
@@ -91,26 +95,21 @@ struct FormView: View {
             .foregroundStyle(.secondary)
             .padding(.top, 18)
         
-        Button("Submit") {
-            errorMsg = inputValidation(name, age, weight, height, gender, calorieBudget, recommendedBudget: recommendedBudget(age, weight, height, gender), proteinGoal, carbGoal, fatGoal)
-            
-            if !errorMsg.hasSuffix("Successfully Submitted") {
-                showAlert.toggle()
-            } else {
-                showWelcomeMessage = true
-                userProfileViewModel.addUser(name, age, gender, weight, height, calorieBudget, proteinGoal, carbGoal, fatGoal, weightGoal)
-            }
-            
-        }.alert("Alert", isPresented: $showAlert, actions: {
-            // Left empty to use default "OK" action
-        }, message: {
-            Text(errorMsg)
-        })
-        .fullScreenCover(isPresented: $showWelcomeMessage) {
-            Text("Welcome To CaloTrack!")
-                .font(.system(size: 36, weight: .bold))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
+        Section {
+            Button("Submit") {
+                errorMsg = inputValidation(name, age, weight, height, gender, calorieBudget, recommendedBudget: recommendedBudget(age, weight, height, gender), proteinGoal, carbGoal, fatGoal)
+                
+                if !errorMsg.hasSuffix("Successfully Submitted") {
+                    showAlert.toggle()
+                } else {
+                    userProfileViewModel.addUser(name, age, gender, weight, height, calorieBudget, proteinGoal, carbGoal, fatGoal, weightGoal)
+                }
+                
+            }.alert("Alert", isPresented: $showAlert, actions: {
+                // Left empty to use default "OK" action
+            }, message: {
+                Text(errorMsg)
+            })
         }
         .frame(width: 300, height: 50)
         .background(.green)
@@ -118,6 +117,7 @@ struct FormView: View {
         .cornerRadius(10)
         .padding()
     }
+
     
     /// Needed to calculate the recommended calorie budget according to the user's details
     func recommendedBudget(_ age: String, _ weight: String, _ height: String, _ gender: String) -> Int {

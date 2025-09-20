@@ -27,7 +27,15 @@ struct WeightInputView: View {
                 Section {
                     HStack {
                         TextField("Weight", text: $weight)
-                            .keyboardType(.decimalPad)
+                            .keyboardType(.numbersAndPunctuation)
+                            .toolbar {
+                                ToolbarItem(placement: .keyboard) {
+                                    Spacer()
+                                    Button("Done") {
+                                        UIApplication.shared.endEditingMode()
+                                    }
+                                }
+                            }
                             .onChange(of: weight) { oldValue, newValue in
                                 let filtered = newValue.filter {
                                     "0123456789".contains($0)

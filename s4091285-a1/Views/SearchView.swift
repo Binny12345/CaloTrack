@@ -53,6 +53,11 @@ struct SearchView: View {
             VStack(alignment: .leading, spacing: 16) {
                 
                 HStack {
+                    // Search Bar
+                    TextField("Search food...", text: $searchText)
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .padding(.leading, 10)
+                    // Search Button
                     Button {
                         guard !searchText.isEmpty else {
                             allFoods = []
@@ -70,21 +75,18 @@ struct SearchView: View {
                             .foregroundColor(.gray)
                     }
                     .padding(5)
-                    
-                    TextField("Search food...", text: $searchText)
-                        .textFieldStyle(PlainTextFieldStyle())
-                    
                 }
                 .padding(10)
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
                 .padding(.horizontal)
                 
-                // MARK: - Recent Searches
-                Text("Recent Searches")
+                // MARK: - Example Searches
+                Text("Example Food Items")
                     .font(.headline)
                     .padding(.horizontal)
                 
+                // Example Searches for the User
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
                         ForEach(["Banana", "Oatmeal", "Chicken Breast", "Apple"], id: \.self) { item in
@@ -134,6 +136,9 @@ struct SearchView: View {
                     dailyLogViewModel: dailyLogViewModel
                 )
             }
+        }
+        .onTapGesture {
+            UIApplication.shared.endEditingMode()
         }
     }
 }
