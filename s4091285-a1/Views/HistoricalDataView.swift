@@ -8,9 +8,13 @@
 import SwiftUI
 import SwiftData
 
+/// Used to provide the user a page to view all of their past food logs
 struct HistoricalDataView: View {
+    
+    // Takes in the observed object to access all the dailylogs
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
+    // Variable to group logs based on days
     private var groupedLogs: [(date: Date, logs: [FoodItem])] {
         let grouped = Dictionary(grouping: dailyLogViewModel.dailyLogs) { log in
             Calendar.current.startOfDay(for: log.date)
@@ -22,6 +26,7 @@ struct HistoricalDataView: View {
     var body: some View {
         NavigationView {
             List {
+                // Outputs them by each day, and outputs each food log in a formatted display
                 ForEach(groupedLogs, id: \.date) { group in
                     Section(header: Text(group.date, style: .date)) {
                         ForEach(group.logs) { log in
@@ -53,20 +58,9 @@ struct HistoricalDataView: View {
             }
             .navigationTitle("Historical Logs")
         }
+        // Grabs all the logs as soon as page renders
         .onAppear {
             dailyLogViewModel.fetchAllLogsDescending()
         }
     }
 }
-
-#Preview {
-    let container = try! ModelContainer(for: FoodItem.self)
-    let vm = DailyLogViewModel(context: container.mainContext)
-    
-    vm.dailyLogs = [
-        FoodItem(name: "Chicken Breast", calories: 220, protein: 40, carbs: 0, fats: 5, mealType: "Lunch", date: Date()),
-        FoodItem(name: "Oatmeal", calories: 150, protein: 5, carbs: 27, fats: 3, mealType: "Breakfast", date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!)
-            ]
-            
-            return HistoricalDataView(dailyLogViewModel: vm)
-        }

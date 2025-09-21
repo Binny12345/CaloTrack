@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 
+/// Main struct that stores the ContentView with the SwiftData model Container source of truth
 @main
 struct CaloTrackApp: App {
     let container: ModelContainer

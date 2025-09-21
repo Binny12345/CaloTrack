@@ -31,13 +31,8 @@ struct BarcodeView: View {
                     .font(.title)
                     .padding()
                 
-                if scannedBarcode.isEmpty {
-                    Text("Not Yet Scanned")
-                        .bold()
-                        .font(.largeTitle)
-                        .foregroundStyle(.green)
-                        .padding()
-                } else {
+                // Displays "Search" button for barcode when scanned
+                if !scannedBarcode.isEmpty {
                     Button {
                         OpenFoodFactsAPI.shared.fetchProduct(by: scannedBarcode) { result in
                             DispatchQueue.main.async {
@@ -63,6 +58,7 @@ struct BarcodeView: View {
                     .cornerRadius(10)
                 }
             }
+            // Displays FoodDetailView (Same as SearchView) but now with barcode food item
             .sheet(item: $item) { item in
                 FoodDetailView(
                     foodItem: item,

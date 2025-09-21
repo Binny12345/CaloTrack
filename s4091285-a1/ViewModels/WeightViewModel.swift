@@ -42,7 +42,7 @@ class WeightViewModel: ObservableObject {
         print("Successfully added weight log: \(weight) kg on \(date)")
     }
     /// Remove a log into the current logs
-    /// - Parameter offsets: The index for which log the user is removing
+    /// - Parameter id: The index for which log the user is removing
     func removeLog(withId id: UUID) {
         if let logToDelete = weightLogs.first(where: { $0.id == id }) {
             context.delete(logToDelete)
@@ -52,6 +52,7 @@ class WeightViewModel: ObservableObject {
         }
     }
     
+    /// Saves the context into SwiftData
     private func saveContext() {
         do {
             try context.save()

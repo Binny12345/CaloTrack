@@ -10,27 +10,27 @@ import UIKit
 import SwiftUI
 
 /// Required to manage the scanned barcodes and fetch food item accordingly
-final class BarcodeViewController: UIViewController {
+final class BarcodeViewModel: UIViewController {
     
     // Captures the barcode
     let captureSession = AVCaptureSession()
     var previewLayer: AVCaptureVideoPreviewLayer?
-    weak var scannerDelegate: BarcodeViewControllerDelegate?
+    weak var scannerDelegate: BarcodeViewModelDelegate?
     
     // initialises the delegate, so as to not need to forcefully unwrap
-    init(scannerDelegate: BarcodeViewControllerDelegate) {
+    init(scannerDelegate: BarcodeViewModelDelegate) {
         super.init(nibName: nil, bundle: nil)
         self.scannerDelegate = scannerDelegate
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented")}
     
-    // Redid the viewDidLoad() func to add setupCaptureSession()
+    /// Redid the viewDidLoad( ) func to add setupCaptureSession( )
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCaptureSession()
     }
-    // Redid the viewDidLayoutSubviews() func to set previewLayer to my frame set in my BarcodeView
+    /// Redid the viewDidLayoutSubviews( ) func to set previewLayer to my frame set in my BarcodeView
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -41,7 +41,7 @@ final class BarcodeViewController: UIViewController {
         previewLayer.frame = view.layer.bounds
     }
     
-    // Sets up the camera session for the user to start scanning
+    /// Sets up the camera session for the user to start scanning
     private func setupCaptureSession() {
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
             scannerDelegate?.didSurface(error: .invalidDeviceInput)
@@ -91,8 +91,9 @@ final class BarcodeViewController: UIViewController {
 }
 
 /// Extend upon the BarcodeVC to manage the scanned value
-extension BarcodeViewController: AVCaptureMetadataOutputObjectsDelegate {
+extension BarcodeViewModel: AVCaptureMetadataOutputObjectsDelegate {
     
+    /// Captures the scanned Value
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         
         // Checks if meta object is in the array
@@ -117,19 +118,81 @@ extension BarcodeViewController: AVCaptureMetadataOutputObjectsDelegate {
     }
 }
 
-// Error enum for organising the different error states
+/// A SwiftUI wrapper for a UIKit barcode scanner.
+/// Conforms to `UIViewControllerRepresentable` so to integrate UIKit in SwiftUI.
+struct ScannerView: UIViewControllerRepresentable {
+    
+    // Bindings let this view communicate back to the parent SwiftUI view (BarcodeView).
+    @Binding var scannedBarcode: String
+    @Binding var alertItem: AlertItem?
+    
+    
+    /// Creates the UIKit view controller (in`BarcodeViewModel`) that does the scanning.
+    /// - Parameter context: gives us access to the Coordinator (delegate handler).
+    /// - Returns: Instance of BarcodeViewModel which includes the context
+    func makeUIViewController(context: Context) -> BarcodeViewModel {
+        BarcodeViewModel(scannerDelegate: context.coordinator)
+    }
+    
+    /// Called whenever SwiftUI updates the view (e.g., when bindings change).
+    /// - In this case, no need to do anything since the scanner runs independently.
+    func updateUIViewController(_ uiViewController: BarcodeViewModel, context: Context) {}
+    
+    
+    /// Creates a Coordinator, which acts as the middleman between
+    /// the UIKit `BarcodeViewModel` delegate and SwiftUI bindings.
+    /// - Returns: The coordinator and scannerView
+    func makeCoordinator() -> Coordinator {
+        Coordinator(scannerView: self)
+    }
+    
+    
+    /// Coordinator class that conforms to `BarcodeViewModelDelegate`, Handles scanned results and errors.
+    final class Coordinator: NSObject, BarcodeViewModelDelegate {
+        
+        private let scannerView: ScannerView  // Reference to parent SwiftUI view
+        
+        init(scannerView: ScannerView) {
+            self.scannerView = scannerView
+        }
+        
+        /// Called by BarcodeViewModel when a barcode is successfully detected.
+        /// - Parameter Barcode: String that was grabbed from AVCapture
+        func didFind(barcode: String) {
+            // Update the SwiftUI binding, so parent view (BarcodeView) reacts to change.
+            scannerView.scannedBarcode = barcode
+        }
+        
+        /// Called by BarcodeViewModel when an error occurs.
+        /// - Parameter error: Specific error relating to what occured
+        func didSurface(error: CameraError) {
+            // sets the low-level CameraError into high-level user-facing alerts.
+            switch error {
+            case .invalidDeviceInput:
+                scannerView.alertItem = AlertContext.invalidDeviceInput
+            case .invalidScannedValue:
+                scannerView.alertItem = AlertContext.invalidScannedValue
+            }
+        }
+    }
+}
+
+/// Error enum for organising the different error states
 enum CameraError: String {
+    /// When there is an issue with the Device
     case invalidDeviceInput
+    
+    /// When the value that was scanned doesn't match the accepted formats
     case invalidScannedValue
 }
 
-// Protocol for setting quick functions for if a barcode/error is found
-protocol BarcodeViewControllerDelegate: AnyObject {
+/// Protocol for setting quick functions for if a barcode/error is found
+protocol BarcodeViewModelDelegate: AnyObject {
     func didFind(barcode: String)
     func didSurface(error: CameraError)
 }
 
-// Helper struct which organises the alert
+/// Helper struct which organises the alert
 struct AlertItem: Identifiable {
     let id = UUID()
     let title: String
@@ -137,7 +200,7 @@ struct AlertItem: Identifiable {
     let dismissButton: Alert.Button
 }
 
-// Helper struct which sets each error Alert
+/// Helper struct which sets each error Alert
 struct AlertContext {
     static let invalidDeviceInput = AlertItem(
         title: "Invalid Device Input",

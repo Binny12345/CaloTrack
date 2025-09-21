@@ -10,6 +10,7 @@ import SwiftUI
 /// To Show the initial screen when user first downloads the app
 struct OnboardingView: View {
     
+    // Observed objects to pass into FormView
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @ObservedObject var userProfileViewModel: UserProfileViewModel
@@ -24,7 +25,7 @@ struct OnboardingView: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
-                .ignoresSafeArea()
+                .ignoresSafeArea() // Makes background go to edge of screen
                 
                 VStack(spacing: 30) {
                     Spacer()
@@ -50,6 +51,7 @@ struct OnboardingView: View {
                     
                     Spacer()
                     
+                    // Makes the button link to FormView
                     NavigationLink(destination: FormView(
                         userProfileViewModel: userProfileViewModel,
                         weightViewModel: weightViewModel,
@@ -70,6 +72,3 @@ struct OnboardingView: View {
     }
 }
 
-//#Preview {
-//    OnboardingView()
-//}

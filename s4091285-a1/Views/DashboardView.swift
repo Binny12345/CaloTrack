@@ -10,14 +10,16 @@ import Charts
 import SwiftData
 
 // MARK: - Custom Welcome Layout
-/// DashboardView to display the user's initial Data and what they have consumed
+/// The main home screen showing calories, macros, weight progress, and navigation into other sections. Acts as the hub for data visualization.
 struct DashboardView: View {
-    
+    // Passed in objects from MainTabView (MVVM Separation)
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @ObservedObject var userProfileViewModel: UserProfileViewModel
-    @StateObject private var macroCardVM = MacroCardViewModel()
     
+    @StateObject private var macroCardVM = MacroCardViewModel() // State Object to manage MacroCard Gesture state
+    
+    // Computed properties to sum up today’s logs into totals
     var totalCalories: Int {
         Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
             sum + (log.calories)
@@ -44,6 +46,8 @@ struct DashboardView: View {
     
     
     var body: some View {
+        
+        // Variabes created for using data from userProfileViewModel
         let calories = userProfileViewModel.currentUser?.calorieBudget ?? 1800
         let progress = Double(totalCalories) / Double(calories)
         let proteinGoal = userProfileViewModel.currentUser?.proteinGoal ?? 100
@@ -80,6 +84,8 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     
                     // MARK: - Calorie Today/Remaining
+                    
+                    // Calorie Summary with progress ring and text
                     HStack(alignment: .center, spacing: 24) {
                         
                         // Progress Ring
@@ -108,8 +114,6 @@ struct DashboardView: View {
                         }
                         .frame(width: 120, height: 120)
                         .padding(.leading, 4)
-                        
-                        //Spacer()
                         
                         // Text Info
                         VStack(alignment: .leading, spacing: 4) {
@@ -142,6 +146,7 @@ struct DashboardView: View {
                         }
                     }
                     
+                    // Navigation button -> AllMealsView
                     NavigationLink(destination: AllMealsView(dailyLogViewModel: dailyLogViewModel)) {
                         VStack(alignment: .trailing, spacing: 4) {
                             Text("All Meals")
@@ -164,6 +169,7 @@ struct DashboardView: View {
                 .shadow(radius: 1)
                 
                 // MARK: - Macros
+                // Macros (delegates to MacroCardView)
                 VStack(alignment: .center, spacing: 12) {
                     Text("Macronutrients")
                         .font(.headline)
@@ -206,6 +212,8 @@ struct DashboardView: View {
                     Text("Goal: \(weightGoal)kg")
                         .foregroundStyle(.secondary)
                     
+                    // Chart that maps the weight lops inputted from WeightVM
+                    // Creates points of each weight log and lines connecting them
                     Chart(weightViewModel.weightLogs) { log in
                         LineMark(
                             x: .value("Date", log.date),
@@ -233,10 +241,4 @@ struct DashboardView: View {
     }
 }
 
-    
-// MARK: - Previews with In-Memory Data
-#Preview {
-
-}
-    
     

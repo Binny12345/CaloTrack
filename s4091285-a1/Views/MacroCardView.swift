@@ -8,9 +8,10 @@
 import SwiftUI
 import Charts
 
-/// MacroCardView which displays the changed views when the user activates the Long Press + Flick gesture
+/// Displays macros (protein, carbs, fats) either as progress bars or rings, depending on gesture input.
 struct MacroCardView: View {
     
+    // State and observed variables
     @ObservedObject var viewModel: MacroCardViewModel
     @State private var isPressed: Bool = false
     @State private var dragOffset: CGSize = .zero
@@ -18,6 +19,7 @@ struct MacroCardView: View {
     var body: some View {
         VStack {
             ZStack {
+                // Displays each view using a transition animation
                 if viewModel.currentStyle == .bars {
                     barsView
                         .transition(.move(edge: .leading).combined(with: .opacity))
@@ -49,6 +51,8 @@ struct MacroCardView: View {
         .background(Color(.systemGray6))
         .cornerRadius(12)
         .shadow(radius: isPressed ? 5 : 1)
+        
+        // Combined Gesture
         .gesture(
             LongPressGesture(minimumDuration: 0.5)
                 .sequenced(before: DragGesture(minimumDistance: 20))
@@ -86,6 +90,7 @@ struct MacroCardView: View {
                 }
         )
     }
+    // Variable that holds each Macro as a bar display
     private var barsView: some View {
         VStack {
             ProgressView("Protein: \(Int(viewModel.protein))g of \(Int(viewModel.proteinGoal))g", value: Double(viewModel.protein), total: Double(viewModel.proteinGoal))
@@ -97,6 +102,7 @@ struct MacroCardView: View {
         }
     }
     
+    // Variable that holds each Macro as a ring display
     private var ringsView: some View {
         HStack {
             RingView(value: Double(viewModel.protein), total: Double(viewModel.proteinGoal), label: "Protein")
@@ -108,7 +114,7 @@ struct MacroCardView: View {
 
 
 
-/// Struct that is used to create each individual ring for the RingView
+/// Reusable subview that draws one macro’s progress as a circular ring.
 struct RingView: View {
     let value: Double
     let total: Double
@@ -141,7 +147,4 @@ struct RingView: View {
     }
 }
 
-#Preview {
-    MacroCardView(viewModel: MacroCardViewModel())
-}
 

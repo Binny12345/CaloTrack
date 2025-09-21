@@ -33,6 +33,5 @@ This Documentation will serve as a guide to navigating this project.
 - ``ManualLogView``
 - ``OnboardingView``
 - ``SearchView``
-- ``ScannerView``
 - ``SettingsView``
 - ``WeightInputView``

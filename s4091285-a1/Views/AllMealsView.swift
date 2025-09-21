@@ -9,6 +9,8 @@ import SwiftUI
 
 /// AllMealsView displays all of the user's logged meals for the day
 struct AllMealsView: View {
+    
+    // Observed objects in order to use it's data
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
     /// Groups meals by their mealType
@@ -48,13 +50,14 @@ struct AllMealsView: View {
 
 /// FoodItemCard displays each individual food item
 struct FoodItemCard: View {
-    
-    
+
+    // Observed objects in order to use it's data
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     let foods: [FoodItem]
     
     var body: some View {
         VStack(spacing: 8) {
+            // Iterates through each food item in foods and displays in formatted appearance
             ForEach(foods, id: \.id) { food in
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
@@ -66,6 +69,7 @@ struct FoodItemCard: View {
                             .foregroundColor(.secondary)
                     }
                     Spacer()
+                    // Delete button
                     Button {
                         dailyLogViewModel.removeLog(withId: food.id)
                     } label: {
@@ -84,8 +88,3 @@ struct FoodItemCard: View {
     }
 }
 
-#Preview {
-//    NavigationStack {
-//        AllMealsView(dailyLogViewModel: DailyLogViewModel())
-//    }
-}

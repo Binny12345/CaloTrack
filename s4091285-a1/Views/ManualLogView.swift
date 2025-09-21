@@ -8,11 +8,12 @@
 import SwiftUI
 import SwiftData
 
+/// Used to let the user manually input their food item
 struct ManualLogView: View {
-    let foodItem: FoodItem? = nil
     
+    // State and object variables
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss) private var dismiss // Used for dismissing the view, as it is a sheet
     
     @State private var selectedMenuType: String = "Breakfast"
     @State private var servingSize: Double = 1.0
@@ -23,6 +24,7 @@ struct ManualLogView: View {
     @State var fats: String = ""
     
     let options = ["Breakfast", "Lunch", "Dinner", "Snack"]
+    let foodItem: FoodItem? = nil
 
     
     // Adjust nutrition based on serving size
@@ -88,6 +90,7 @@ struct ManualLogView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
+                // Passes Data into a custom struct
                 HStack {
                     NutritionItem(label: "Calories", value: Int(adjustedFoodItem.calories), unit: "kcal")
                     Spacer()
@@ -104,7 +107,7 @@ struct ManualLogView: View {
             
             Spacer()
             
-            // Buttons
+            // Buttons to add or leave
             VStack(spacing: 12) {
                 Button("Add to Log") {
                     dailyLogViewModel.addFoodToLog(foodItem: adjustedFoodItem, mealType: selectedMenuType)
@@ -136,15 +139,3 @@ struct ManualLogView: View {
     }
 }
 
-#Preview {
-    let container = try! ModelContainer(
-        for: FoodItem.self, WeightLog.self,
-        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-    )
-    let context = container.mainContext
-
-    ManualLogView(
-        dailyLogViewModel: DailyLogViewModel(context: context)
-    )
-    .modelContainer(container)
-}

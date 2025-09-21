@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-/// View to display the form for the user to fill out when registering
+/// Collects user input at registration (name, age, gender, macros, goals).
 struct FormView: View {
+    // State variables of the user's inputted data
     @State private var name: String = ""
     @State private var age: String = ""
     @State private var weight: String = ""
@@ -21,8 +22,8 @@ struct FormView: View {
     @State private var calorieBudget: String = ""
     @State private var showAlert: Bool = false
     @State private var errorMsg: String = ""
-    //@State private var showWelcomeMessage: Bool = false
     
+    // Observed Objects
     @ObservedObject var userProfileViewModel: UserProfileViewModel
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
@@ -84,11 +85,12 @@ struct FormView: View {
                         .keyboardType(.numberPad)
                 }
             }
-        }
+        } // For when the user wants to exit the keyboard
         .onTapGesture {
             UIApplication.shared.endEditingMode()
         }
         
+        // Provides the user with a recommended Budget based on already inputted information
         Text("Recommended Budget Based On Your Stats: \n\(recommendedBudget(age, weight, height, gender))kcal")
             .frame(alignment: .center)
             .font(.callout)
@@ -97,11 +99,15 @@ struct FormView: View {
         
         Section {
             Button("Submit") {
+                
+                // Validates input before submission
                 errorMsg = inputValidation(name, age, weight, height, gender, calorieBudget, recommendedBudget: recommendedBudget(age, weight, height, gender), proteinGoal, carbGoal, fatGoal)
                 
+                // If validation doesn't return "Successfully Submitted", show the user their specificed error message
                 if !errorMsg.hasSuffix("Successfully Submitted") {
                     showAlert.toggle()
                 } else {
+                    // Else, add their details to add user
                     userProfileViewModel.addUser(name, age, gender, weight, height, calorieBudget, proteinGoal, carbGoal, fatGoal, weightGoal)
                 }
                 
@@ -120,13 +126,20 @@ struct FormView: View {
 
     
     /// Needed to calculate the recommended calorie budget according to the user's details
+    /// - Parameter age: Age that user inputted
+    /// - Parameter weight: Weight that user inputted
+    /// - Parameter height: Height that user inputted
+    /// - Parameter gender: Gender that user inputted
+    /// - Returns: Formula for either if the user is male or female
     func recommendedBudget(_ age: String, _ weight: String, _ height: String, _ gender: String) -> Int {
         let age = (Int(age) ?? 0) * 5
         let weight = (Double(weight) ?? 0) * 6.25
         let height = (Int(height) ?? 0) * 10
         
+        // Base formula
         var formula = Int(weight) + height - age
         
+        // Provide different Calculations depending on gender
         if gender == "Male" {
             formula += 5
         } else if gender == "Female" {
@@ -136,6 +149,17 @@ struct FormView: View {
     }
     
     /// Needed to validate all the input before being submitted
+    /// - Parameter name: User's name
+    /// - Parameter age: Age that user inputted
+    /// - Parameter weight: Weight that user inputted
+    /// - Parameter height: Height that user inputted
+    /// - Parameter gender: Gender that user inputted
+    /// - Parameter calorieBudget: Budget that user inputted
+    /// - Parameter recommendedBudget: The recommended budget provided by the recommendedBudget( ) formula
+    /// - Parameter proteinGoal: Protein goal that the user inputted
+    /// - Parameter carbGoal: Carb goal that the user inputted
+    /// - Parameter fatGoal: Fat goal that the user inputted
+    /// - Returns: Either error message or "Successfully Submitted"
     func inputValidation(
         _ name: String,
         _ age: String,
@@ -148,7 +172,8 @@ struct FormView: View {
         _ carbGoal: String,
         _ fatGoal: String
     ) -> String {
-        var errorMsg: String = ""
+        // Variables set from parameters
+            var errorMsg: String = ""
             let protein = Int(proteinGoal) ?? 0
             let carbs = Int(carbGoal) ?? 0
             let fats = Int(fatGoal) ?? 0
@@ -190,14 +215,7 @@ struct FormView: View {
         else {
             errorMsg = "Successfully Submitted"
         }
-        
         return errorMsg
     }
-    
-
 }
 
-
-//#Preview {
-//    FormView()
-//}

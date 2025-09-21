@@ -40,6 +40,7 @@ class DailyLogViewModel: ObservableObject {
         }
     }
     
+    /// Fetches all logs in Descending order
     func fetchAllLogsDescending() {
         let descriptor = FetchDescriptor<FoodItem>(
             sortBy: [SortDescriptor(\.date, order: .reverse)]

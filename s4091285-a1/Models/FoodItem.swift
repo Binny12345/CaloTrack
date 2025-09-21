@@ -22,7 +22,6 @@ class FoodItem {
     var mealType: String
     var date: Date
     
-    /// Enum needed to organise the FoodItem struct
     init(id: UUID = UUID(), name: String, calories: Double, protein: Double, carbs: Double, fats: Double, mealType: String, date: Date) {
         self.id = id
         self.name = name

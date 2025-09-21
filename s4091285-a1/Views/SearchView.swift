@@ -18,6 +18,7 @@ struct SearchView: View {
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
+    // Filters input
     var filteredFoods: [FoodSearchResult] {
         allFoods.filter { food in
             searchText.isEmpty || food.name.localizedCaseInsensitiveContains(searchText)
@@ -38,6 +39,7 @@ struct SearchView: View {
                 Text("Manual Log")
                 Image(systemName: "plus.circle")
             }
+            // Sends user to ManualLogView
             .sheet(isPresented: $isShowingManualScreen) {
                 ManualLogView(
                     dailyLogViewModel: dailyLogViewModel
@@ -57,7 +59,7 @@ struct SearchView: View {
                     TextField("Search food...", text: $searchText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.leading, 10)
-                    // Search Button
+                    // Search Button which calls API Func searchFoods( )
                     Button {
                         guard !searchText.isEmpty else {
                             allFoods = []
@@ -86,7 +88,7 @@ struct SearchView: View {
                     .font(.headline)
                     .padding(.horizontal)
                 
-                // Example Searches for the User
+                // Example Searches for the User to get ideas
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
                         ForEach(["Banana", "Oatmeal", "Chicken Breast", "Apple"], id: \.self) { item in
@@ -108,9 +110,10 @@ struct SearchView: View {
                     .padding(.horizontal)
                 ScrollView {
                     if isLoading {
-                        ProgressView("Searching...")
+                        ProgressView("Searching...") // Loading State
                             .padding(.init(top: 150, leading: 150, bottom: 150, trailing: 150))
                 } else {
+                    // displays each found food item using custom struct
                     LazyVStack(spacing: 12) {
                         ForEach(filteredFoods) { food in
                             FoodResultRow(food: food) {
@@ -130,6 +133,7 @@ struct SearchView: View {
                 }
             }
             }
+            // Sends user to FoodDetailView when clicked on a food item
             .sheet(item: $selectedFood) { item in
                 FoodDetailView(
                     foodItem: item,
@@ -137,6 +141,7 @@ struct SearchView: View {
                 )
             }
         }
+        // Lets the user exit the keyboard
         .onTapGesture {
             UIApplication.shared.endEditingMode()
         }
@@ -145,10 +150,12 @@ struct SearchView: View {
 
 /// Displays each food item fetched from the API in a modular row component
 struct FoodResultRow: View {
+    // Passed in parameters
     let food: FoodSearchResult
     var onAdd: () -> Void
     
     var body: some View {
+        // Formatted display
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(food.name)

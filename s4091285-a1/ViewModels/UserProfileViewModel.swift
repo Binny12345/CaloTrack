@@ -12,6 +12,7 @@ import Foundation
 /// Used to store and manage details of the current user when they register
 class UserProfileViewModel: ObservableObject {
     
+    // State Variables
     @Published var currentUser: UserProfile?
     @Published var isRegistered: Bool = false
     
@@ -22,6 +23,17 @@ class UserProfileViewModel: ObservableObject {
         loadUser()
     }
     
+    /// Adds user to SwiftData/Firebase
+    /// - Parameter name: User's name
+    /// - Parameter age: Age that user inputted
+    /// - Parameter weight: Weight that user inputted
+    /// - Parameter height: Height that user inputted
+    /// - Parameter gender: Gender that user inputted
+    /// - Parameter calorieBudget: Budget that user inputted
+    /// - Parameter proteinGoal: Protein goal that the user inputted
+    /// - Parameter carbGoal: Carb goal that the user inputted
+    /// - Parameter fatGoal: Fat goal that the user inputted
+    /// - Parameter weightGoal: Weight goal decided by the user
     func addUser(_ name: String,
                  _ age: String,
                  _ gender: String,
@@ -58,6 +70,7 @@ class UserProfileViewModel: ObservableObject {
         
     }
     
+    /// Used to load user if existing in the DB
     private func loadUser() {
         let descriptor = FetchDescriptor<UserProfile>()
         if let existing = try? context.fetch(descriptor).first {

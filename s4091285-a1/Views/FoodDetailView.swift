@@ -10,16 +10,17 @@ import SwiftData
 
 /// FoodDetailView to display the detailed information of each FoodItem
 struct FoodDetailView: View {
-    let foodItem: FoodItem
     
+    // State and Observed variables
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
-    
     @State private var selectedMenuType: String = "Breakfast"
     @State private var servingSize: Double = 1.0
     
     let options = ["Breakfast", "Lunch", "Dinner", "Snack"]
+    let foodItem: FoodItem
     
+    /// Initialises the chosen food item and the dailyLogVM
     init(foodItem: FoodItem,
          dailyLogViewModel: DailyLogViewModel,
     ) {
@@ -83,6 +84,7 @@ struct FoodDetailView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
+                // Passes Data into a custom struct
                 HStack {
                     NutritionItem(label: "Calories", value: Int(adjustedFoodItem.calories), unit: "kcal")
                     Spacer()
@@ -99,7 +101,7 @@ struct FoodDetailView: View {
             
             Spacer()
             
-            // Buttons
+            // Buttons to add or leave
             VStack(spacing: 12) {
                 Button("Add to Log") {
                     dailyLogViewModel.addFoodToLog(foodItem: adjustedFoodItem, mealType: selectedMenuType)
@@ -129,30 +131,11 @@ struct FoodDetailView: View {
     }
 }
 
-#Preview {
-    let container = try! ModelContainer(for: FoodItem.self, WeightLog.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-    let context = container.mainContext
-
-    let sampleFood = FoodItem(
-        name: "Banana",
-        calories: 80,
-        protein: 1,
-        carbs: 22,
-        fats: 0,
-        mealType: "Snack",
-        date: Date()
-    )
-
-    return FoodDetailView(
-        foodItem: sampleFood,
-        dailyLogViewModel: DailyLogViewModel(context: context)
-    )
-    .modelContainer(container)
-}
-
 // MARK: - Helper View for Nutrition Display
-/// Helper NutritionItem struct to display the individual macros within the HStack
+/// Custom Helper struct to display the individual macros within the HStack
 struct NutritionItem: View {
+    
+    // Passed-in variables
     let label: String
     let value: Int
     let unit: String

@@ -7,13 +7,17 @@
 
 import Foundation
 
+/// REST API service for searching foods and fetching by barcode.
 class OpenFoodFactsAPI {
     static let shared = OpenFoodFactsAPI()
     private init() { }
     
-    // Search Food Items
+    /// Calls REST API to search  for food Items
+    /// - Parameter query: String that is put into the API to search for the food item
+    /// - Parameter completion: returns list of food items
     func searchFoods(query: String, completion: @escaping ([FoodSearchResult]) -> Void) {
         
+        // encodes the query and sets url to include query
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "https://world.openfoodfacts.org/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=10")
         else {
@@ -26,16 +30,20 @@ class OpenFoodFactsAPI {
                 completion([])
                 return
             }
+            
+            // Do-catch block to fetch the items from the API
             do {
                 let response = try JSONDecoder().decode(OFFSearchResponse.self, from: data)
                 let items = response.products.compactMap { product -> FoodSearchResult? in
                     
+                    // Organises fetched data into variables to put into a result for user to access
                     guard let name = product.product_name else { return nil }
                     let calories = product.nutriments?.energyKcal ?? 0
                     let protein = product.nutriments?.protein ?? 0
                     let carbs = product.nutriments?.carbs ?? 0
                     let fat = product.nutriments?.fats ?? 0
                     
+                    // Returns the fetched item
                    return FoodSearchResult(
                              name: name,
                              calories: calories,
@@ -56,8 +64,11 @@ class OpenFoodFactsAPI {
         }.resume()
     }
     
-    
+    /// Calls REST API to search for the barcode item
+    /// - Parameter barcode: Barcode that's converted into a string that is put into the API to search for the food item
+    /// - Parameter completion: Optionally returns a food item
     func fetchProduct(by barcode: String, completion: @escaping (FoodSearchResult?) -> Void) {
+        // Sets url to include the barcode
         guard let url = URL(string: "https://world.openfoodfacts.org/api/v0/product/\(barcode).json") else {
             completion(nil)
             return
@@ -69,8 +80,11 @@ class OpenFoodFactsAPI {
                 return
             }
             
+            // Do-catch block to fetch the barcode item from the API
             do {
                 let response = try JSONDecoder().decode(OFFProductResponse.self, from: data)
+                
+                // Organises fetched data into variables to put into a result for user to access
                 if let product = response.product,
                    let name = product.product_name {
                     
@@ -98,6 +112,14 @@ class OpenFoodFactsAPI {
     }
 }
 
+/// Helper struct to organise the scanned barcode's food item
+struct OFFProductResponse: Codable {
+    let status: Int
+    let code: String
+    let product: OFFProduct?
+}
+
+/// Helper struct to organise the fetched data
 struct FoodSearchResult: Identifiable {
     let id = UUID()
     let name: String
@@ -109,21 +131,18 @@ struct FoodSearchResult: Identifiable {
     let date: Date
 }
 
+/// Helper struct to organise the response of the fetch
 struct OFFSearchResponse: Codable {
     let products: [OFFProduct]
 }
 
+/// Helper struct to organise the data into a single object
 struct OFFProduct: Codable {
     let product_name: String?
     let nutriments: Nutriments?
 }
 
-struct OFFProductResponse: Codable {
-    let status: Int
-    let code: String
-    let product: OFFProduct?
-}
-
+/// Helper struct to organise the macros and format them from the API into CaloTrack's parameters
 struct Nutriments: Codable {
     let energyKcal: Double?
     let protein: Double?

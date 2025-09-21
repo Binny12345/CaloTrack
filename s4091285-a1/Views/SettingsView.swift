@@ -9,6 +9,8 @@ import SwiftUI
 
 /// SettingsView for the user to view their settings
 struct SettingsView: View {
+    
+    // Passed in objects
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @State private var clearLogsPopover: Bool = false
     
@@ -22,7 +24,7 @@ struct SettingsView: View {
                 }
                 .foregroundStyle(.green)
                     
-                
+                // Sends user to HistoricalDataView
                 NavigationLink(destination: HistoricalDataView(dailyLogViewModel: dailyLogViewModel)) {
                     Text("Historical Data")
                 }
@@ -36,11 +38,13 @@ struct SettingsView: View {
                 Text("Clear Logs For The Day")
                     .foregroundStyle(.red)
             }
+            // Displays a confirmation message
             .popover(isPresented: $clearLogsPopover) {
                 VStack() {
                     Text("This action will remove all of your log entries for the day. \nAre you sure?")
                         .multilineTextAlignment(.center)
                     
+                    // Clears logs from DB and exits the popover
                     Button() {
                         clearLogsPopover = false
                         dailyLogViewModel.clearDailyLogs()
@@ -65,6 +69,3 @@ struct SettingsView: View {
     }
 }
 
-#Preview {
-    //SettingsView(dailyLogViewModel: DailyLogViewModel())
-}

@@ -9,6 +9,8 @@ import SwiftUI
 
 /// WeightInputView for the user to input their weight for the day
 struct WeightInputView: View {
+    
+    // State variables
     @State private var weight: String = ""
     @State private var unit: String = "kg"   // default to kg
     @State private var date: Date = Date()
@@ -36,6 +38,7 @@ struct WeightInputView: View {
                                     }
                                 }
                             }
+                        // Filters the input
                             .onChange(of: weight) { oldValue, newValue in
                                 let filtered = newValue.filter {
                                     "0123456789".contains($0)
@@ -45,7 +48,7 @@ struct WeightInputView: View {
                                 }
                             }
                     }
-                    
+                    // Date picker, can't go past current day
                     DatePicker("Select Day",
                                selection: $date,
                                in: ...Date(),
@@ -53,6 +56,7 @@ struct WeightInputView: View {
                     )
                     .datePickerStyle(.graphical)
                     
+                    // Calls saveWeight( ) when button is pressed
                     let addButton = Text("Add")
                         .bold()
                         .frame(maxWidth: .infinity)
@@ -60,7 +64,7 @@ struct WeightInputView: View {
                         .background(Color.green)
                         .foregroundColor(.black)
                         .cornerRadius(8)
-
+                    
                     Button(action: {
                         saveWeight()
                     }) {
@@ -69,6 +73,7 @@ struct WeightInputView: View {
                     .disabled(weight.isEmpty)
                 }
                 
+                // Displays saved weights so far
                 Section(header: Text("Saved Weights")) {
                     let sortedItems = weightViewModel.weightLogs.sorted{ $0.date > $1.date }
                     
@@ -80,25 +85,21 @@ struct WeightInputView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    //.onDelete(perform: weightViewModel.removeLog(weightLogs.self))
                 }
             }
             .padding(20)
             .cornerRadius(12)
             .shadow(radius: 1)
+            // Confirmation Alert
             .alert("Weight Has Been Saved!", isPresented: $showConfirmation) {
                 Button("OK", role: .cancel) { }
             }
         }
     }
-    
+    /// Used to save the weight into the Database
     private func saveWeight() {
         weightViewModel.addLog(weight: Double(weight) ?? 0, date: date)
         weight = ""
         showConfirmation = true
     }
-}
-
-#Preview {
-//    WeightInputView(weightViewModel: WeightViewModel())
 }
