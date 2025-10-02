@@ -155,4 +155,24 @@ struct Nutriments: Codable {
         case carbs = "carbohydrates_100g"
         case fats = "fat_100g"
     }
+    
+    // Custom decoder to handle both numbers and strings
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        energyKcal = try Nutriments.decodeNumber(forKey: .energyKcal, in: container)
+        protein = try Nutriments.decodeNumber(forKey: .protein, in: container)
+        carbs = try Nutriments.decodeNumber(forKey: .carbs, in: container)
+        fats = try Nutriments.decodeNumber(forKey: .fats, in: container)
+    }
+    
+    private static func decodeNumber(forKey key: CodingKeys, in container: KeyedDecodingContainer<CodingKeys>) throws -> Double? {
+        if let doubleValue = try? container.decode(Double.self, forKey: key) {
+            return doubleValue
+        }
+        if let stringValue = try? container.decode(String.self, forKey: key) {
+            return Double(stringValue)
+        }
+        return nil
+    }
 }

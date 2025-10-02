@@ -14,6 +14,7 @@ struct OnboardingView: View {
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @ObservedObject var userProfileViewModel: UserProfileViewModel
+    @ObservedObject var authViewModel: AuthViewModel
     
     var body: some View {
         NavigationStack {
@@ -51,19 +52,15 @@ struct OnboardingView: View {
                     
                     Spacer()
                     
-                    // Makes the button link to FormView
-                    NavigationLink(destination: FormView(
-                        userProfileViewModel: userProfileViewModel,
-                        weightViewModel: weightViewModel,
-                        dailyLogViewModel: dailyLogViewModel
-                    )) {
-                        Text("Get Started")
+                    NavigationLink(destination: SigninView(auth: authViewModel, weightViewModel: weightViewModel, dailyLogViewModel: dailyLogViewModel, userProfileViewModel: userProfileViewModel)) {
+                        Text("Continue")
                             .frame(width: 300, height: 50)
                             .background(.green)
                             .foregroundStyle(.white)
                             .cornerRadius(10)
                             .padding()
                     }
+                    
                     Spacer()
                 }
                 .padding()

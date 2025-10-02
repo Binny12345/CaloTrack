@@ -7,57 +7,86 @@
 
 import Foundation
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
+import FirebaseAuth
 
 /// DailyLogViewModel needed to store all the functionality of the SearchView and FoodDetailView
+@MainActor
 class DailyLogViewModel: ObservableObject {
     
-    private var context: ModelContext
+    // Variabes
     @Published var dailyLogs: [FoodItem] = []
     
-    /// Initialises the class with the context from DailyLog Model
-    /// - Parameter context: Grabbing the context from CaloTrackApp.Swift to make the data persistent
-    init(context: ModelContext) {
-        self.context = context
-        fetchTodaysLogs()
+    private var firestoreService = FirestoreService()
+    private var listener: ListenerRegistration?
+    
+    private var uid: String? {
+        Auth.auth().currentUser?.uid
     }
+    
+    // MARK: - Computed Nutrition Totals
+    var totalCaloriesToday: Int {
+        todaysLogs.reduce(0) { $0 + Int($1.calories) }
+    }
+    var totalProteinToday: Int {
+        todaysLogs.reduce(0) { $0 + Int($1.protein) }
+    }
+    var totalCarbsToday: Int {
+        todaysLogs.reduce(0) { $0 + Int($1.carbs) }
+    }
+    var totalFatsToday: Int {
+        todaysLogs.reduce(0) { $0 + Int($1.fats) }
+    }
+    
       
-    /// Fetches for all logs
-    func fetchTodaysLogs() {
-        let today = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) ?? today.addingTimeInterval(86400)
-        
-        let descriptor = FetchDescriptor<FoodItem>(
-            predicate: #Predicate { log in
-                log.date >= today && log.date < tomorrow
+    // MARK: - Firebase Listeners
+    
+    /// Start listening to **today’s logs only**
+    func startListening() {
+        listener?.remove()
+        guard let uid else { return }
+
+        listener = firestoreService.listenToFoodItems(uid: uid) { [weak self] items in
+            guard let self else { return }
+
+            print("Fetched \(items.count) total logs from Firestore for user \(uid)")
+
+            let calendar = Calendar.current
+            let today = calendar.startOfDay(for: Date())
+
+            let todaysItems = items.filter { log in
+                let logDay = calendar.startOfDay(for: log.date)
+                return logDay == today
             }
-        )
-        do {
-            dailyLogs = try context.fetch(descriptor)
-        } catch {
-            print("Failed to fetch today's logs: \(error)")
-            dailyLogs = []
+
+            print("Filtered to \(todaysItems.count) logs for today (\(today))")
+
+            self.dailyLogs = todaysItems
         }
     }
     
     /// Fetches all logs in Descending order
-    func fetchAllLogsDescending() {
-        let descriptor = FetchDescriptor<FoodItem>(
-            sortBy: [SortDescriptor(\.date, order: .reverse)]
-        )
+    func fetchAllLogsDescending() async {
+        guard let uid else { return }
+        
         do {
-            dailyLogs = try context.fetch(descriptor)
+            let items = try await firestoreService.fetchFoodItems(uid: uid)
+            self.dailyLogs = items.sorted { $0.date > $1.date }
         } catch {
-            print("Failed to fetch all logs: \(error)")
-            dailyLogs = []
+            print("Failed to fetch logs: \(error.localizedDescription)")
+            self.dailyLogs = []
         }
     }
+    
+    // MARK: CRUD Functionality
     
     /// Adds a food item to the user's daily log
     /// - Parameter foodItem: The selected food item the user chose
     /// - Parameter mealType: What type of meal is the food item
-    func addFoodToLog(foodItem: FoodItem, mealType: String = "Snack") {
+    func addFoodToLog(foodItem: FoodItem, mealType: String = "Snack") async {
+        guard let uid else { return }
         let logEntry = FoodItem(
+            id: nil,
             name: foodItem.name,
             calories: foodItem.calories,
             protein: foodItem.protein,
@@ -67,52 +96,53 @@ class DailyLogViewModel: ObservableObject {
             date: Date()
         )
         
-        context.insert(logEntry)
-        saveContext()
-        fetchTodaysLogs()
-        print("Successfully added \(foodItem.name) to daily log.")
+        do {
+            try await firestoreService.addFoodItem(uid: uid, foodItem: logEntry)
+            print("Successfully added \(foodItem.name) to your Daily Log!")
+        } catch {
+            print("Failed to save item: \(error.localizedDescription)")
+        }
     }
     
-    /// Removes the food item from the daily log
-    /// - Parameter id: The specified id for each food item
-    func removeLog(withId id: UUID) {
-        if let logToDelete = dailyLogs.first(where: { $0.id == id }) {
-            context.delete(logToDelete)
-            saveContext()
-            fetchTodaysLogs()
-            
-            print("Successfully removed 1 food item from daily log.")
+    /// Removes a food item from the dailyLog by its Firestore document ID
+    /// - Parameter item: The specified food item to be removed
+    func removeFoodLog(_ item: FoodItem) async {
+        guard let uid else { return }
+        do {
+            try await firestoreService.deleteFoodItem(uid: uid, foodItem: item)
+            print("Successfully removed food log.")
+        } catch {
+            print("Failed to delete log: \(error.localizedDescription)")
         }
     }
     
     /// Variable that stores all of the logs for the day
     var todaysLogs: [FoodItem] {
-        let today = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
 
         return dailyLogs.filter { log in
-            guard log.date >= today && log.date < tomorrow else { return false }
-            return true
+            let logDay = calendar.startOfDay(for: log.date)
+            return logDay == today
         }
     }
     
     /// Removes all food items from daily log
-    func clearDailyLogs() {
-        for log in dailyLogs {
-            context.delete(log)
+    func clearDailyLogs() async {
+        for log in todaysLogs {
+            await removeFoodLog(log)
         }
-        saveContext()
-        fetchTodaysLogs()
-        print("All logs cleared!")
     }
     
-    /// Saves the context of DailyLogs
-    private func saveContext() {
-        do {
-            try context.save()
-        } catch {
-            print("Error saving context: \(error)")
-        }
+    /// Resets logs when user logs out
+    func reset() {
+        listener?.remove()
+        dailyLogs = []
+    }
+    
+    /// Deinitialises the listener registration
+    deinit {
+        listener?.remove()
     }
 
 }

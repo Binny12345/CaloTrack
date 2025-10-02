@@ -19,37 +19,12 @@ struct DashboardView: View {
     
     @StateObject private var macroCardVM = MacroCardViewModel() // State Object to manage MacroCard Gesture state
     
-    // Computed properties to sum up today’s logs into totals
-    var totalCalories: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
-            sum + (log.calories)
-        })
-    }
-    
-    var totalProtein: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
-            sum + (log.protein)
-        })
-    }
-    
-    var totalCarbs: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
-            sum + (log.carbs)
-        })
-    }
-    
-    var totalFats: Int {
-        Int(dailyLogViewModel.todaysLogs.reduce(0) { sum, log in
-            sum + (log.fats)
-        })
-    }
-    
-    
     var body: some View {
         
         // Variabes created for using data from userProfileViewModel
         let calories = userProfileViewModel.currentUser?.calorieBudget ?? 1800
-        let progress = Double(totalCalories) / Double(calories)
+        let totalCalories = dailyLogViewModel.totalCaloriesToday
+        let progress = Double(dailyLogViewModel.totalCaloriesToday) / Double(calories)
         let proteinGoal = userProfileViewModel.currentUser?.proteinGoal ?? 100
         let fatGoal = userProfileViewModel.currentUser?.fatGoal ?? 100
         let carbsGoal = userProfileViewModel.currentUser?.carbGoal ?? 100
@@ -89,31 +64,7 @@ struct DashboardView: View {
                     HStack(alignment: .center, spacing: 24) {
                         
                         // Progress Ring
-                        ZStack {
-                            // Changes Color depending on total calories consumed
-                            let ringColor = progress > 1.0 ? Color.red : Color.green
-                            
-                            // Grey Inner Circle
-                            Circle()
-                                .stroke(Color.gray.opacity(0.2), lineWidth: 18)
-                            
-                            // Green/Red Outter Circle
-                            Circle()
-                                .trim(from: 0, to: progress)
-                                .stroke(ringColor, style: StrokeStyle(lineWidth: 18, lineCap: .round))
-                                .rotationEffect(.degrees(-90))
-                            
-                            VStack(spacing: 2) {
-                                Text("\(totalCalories)")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                Text("Remaining")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        .frame(width: 120, height: 120)
-                        .padding(.leading, 4)
+                        ProgressRingView(progress: progress, total: dailyLogViewModel.totalCaloriesToday, label: "Remaining")
                         
                         // Text Info
                         VStack(alignment: .leading, spacing: 4) {
@@ -162,6 +113,7 @@ struct DashboardView: View {
                         .foregroundStyle(.white)
                         .cornerRadius(10)
                     }
+
                 }
                 .padding(20)
                 .background(Color(.systemGray6))
@@ -179,9 +131,9 @@ struct DashboardView: View {
                         MacroCardView(viewModel: macroCardVM)
                             .onAppear {
                                 macroCardVM.update(
-                                    protein: totalProtein,
-                                    carbs: totalCarbs,
-                                    fats: totalFats,
+                                    protein: dailyLogViewModel.totalProteinToday,
+                                    carbs: dailyLogViewModel.totalCarbsToday,
+                                    fats: dailyLogViewModel.totalFatsToday,
                                     proteinGoal: proteinGoal,
                                     carbsGoal: carbsGoal,
                                     fatsGoal: fatGoal
@@ -189,9 +141,9 @@ struct DashboardView: View {
                             }
                             .onChange(of: dailyLogViewModel.todaysLogs) { _, _ in
                                 macroCardVM.update(
-                                    protein: totalProtein,
-                                    carbs: totalCarbs,
-                                    fats: totalFats,
+                                    protein: dailyLogViewModel.totalProteinToday,
+                                    carbs: dailyLogViewModel.totalCarbsToday,
+                                    fats: dailyLogViewModel.totalFatsToday,
                                     proteinGoal: proteinGoal,
                                     carbsGoal: carbsGoal,
                                     fatsGoal: fatGoal
@@ -237,8 +189,44 @@ struct DashboardView: View {
             .padding()
             Spacer()
         }
+        .onAppear {
+            print("Dashboard daily logs count: \(dailyLogViewModel.dailyLogs.count)")
+            dailyLogViewModel.dailyLogs.forEach { print($0.name, $0.date) }
+        }
         
     }
 }
 
+
+/// Displays the Progress Ring of the user's consumed calories
+struct ProgressRingView: View {
+    let progress: Double
+    let total: Int
+    let label: String
+    
+    var body: some View {
+        ZStack {
+            // Inner grey circle
+            Circle()
+                .stroke(Color.gray.opacity(0.2), lineWidth: 18)
+            
+            // Outter green/red circle
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(progress > 1.0 ? .red : .green,
+                        style: StrokeStyle(lineWidth: 18, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            
+            VStack(spacing: 2) {
+                Text("\(total)")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .frame(width: 120, height: 120)
+    }
+}
     

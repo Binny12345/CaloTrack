@@ -110,8 +110,10 @@ struct ManualLogView: View {
             // Buttons to add or leave
             VStack(spacing: 12) {
                 Button("Add to Log") {
-                    dailyLogViewModel.addFoodToLog(foodItem: adjustedFoodItem, mealType: selectedMenuType)
-                    dismiss()
+                    Task {
+                        await dailyLogViewModel.addFoodToLog(foodItem: adjustedFoodItem, mealType: selectedMenuType)
+                        dismiss()
+                    }
                 }
                 .padding()
                 .frame(maxWidth: .infinity)

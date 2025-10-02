@@ -12,6 +12,8 @@ struct SettingsView: View {
     
     // Passed in objects
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
+    @ObservedObject var userProfileViewModel: UserProfileViewModel
+    @ObservedObject var authViewModel: AuthViewModel
     @State private var clearLogsPopover: Bool = false
     
     var body: some View {
@@ -19,24 +21,47 @@ struct SettingsView: View {
             Section(header: Text("Settings")) {
                 
                 // MARK: Personal Details/Historical Data
-                Button("Personal Details") {
-                    // Link to personal detail page
+                NavigationLink(destination: HistoricalDataView(dailyLogViewModel: dailyLogViewModel)) {
+                    HStack {
+                        Image(systemName: "person.fill")
+                        Text("Personal Details")
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.leading, 3)
+                    .cornerRadius(3)
                 }
                 .foregroundStyle(.green)
                     
                 // Sends user to HistoricalDataView
                 NavigationLink(destination: HistoricalDataView(dailyLogViewModel: dailyLogViewModel)) {
-                    Text("Historical Data")
+                    HStack {
+                        Image(systemName: "clock.fill")
+                        Text("Historical Data")
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.leading, 3)
+                    .cornerRadius(3)
                 }
                 .foregroundStyle(.green)
             }
             
-            // MARK: Clear Logs
-            Button {
-                clearLogsPopover.toggle()
-            } label: {
-                Text("Clear Logs For The Day")
-                    .foregroundStyle(.red)
+            Section {
+                // MARK: Clear Logs
+                Button {
+                    clearLogsPopover.toggle()
+                } label: {
+                    Text("Clear Logs For The Day")
+                        .foregroundStyle(.red)
+                }
+                
+                // Signs user out
+                Button {
+                    authViewModel.signOut()
+                    userProfileViewModel.resetUser()
+                } label: {
+                    Text("Sign Out")
+                        .foregroundStyle(.red)
+                }
             }
             // Displays a confirmation message
             .popover(isPresented: $clearLogsPopover) {
@@ -47,7 +72,7 @@ struct SettingsView: View {
                     // Clears logs from DB and exits the popover
                     Button() {
                         clearLogsPopover = false
-                        dailyLogViewModel.clearDailyLogs()
+                       // dailyLogViewModel.clearDailyLogs()
                     } label: {
                         Text("Confirm")
                             .foregroundStyle(.red)
@@ -63,7 +88,6 @@ struct SettingsView: View {
                     
                 }
             }
-            
         }
         .navigationTitle("Settings")
     }

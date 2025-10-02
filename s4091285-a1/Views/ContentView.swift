@@ -7,18 +7,68 @@
 
 import SwiftUI
 
-/// Main View that displays MainTabView and the single sources of truth for 3 ViewModels
+/// Main View that displays MainTabView and the single sources of truth for multiple ViewModels
 struct ContentView: View {
     @StateObject var dailyLogViewModel: DailyLogViewModel
     @StateObject var weightViewModel: WeightViewModel
-    @ObservedObject var userProfileViewModel: UserProfileViewModel
-
+    @StateObject var authViewModel: AuthViewModel
+    @StateObject var userProfileViewModel: UserProfileViewModel
+    
     var body: some View {
-        MainTabView(
-            weightViewModel: weightViewModel,
-            dailyLogViewModel: dailyLogViewModel,
-            userProfileViewModel: userProfileViewModel
-        )
+        Group {
+            if !authViewModel.isAuthenticated {
+                // User not signed in -> Show Signin/Onboarding View
+                OnboardingView(
+                    weightViewModel: weightViewModel,
+                    dailyLogViewModel: dailyLogViewModel,
+                    userProfileViewModel: userProfileViewModel,
+                    authViewModel: authViewModel
+                )
+            } else if userProfileViewModel.isLoading {
+                // Signed in but profile still loading
+                ProgressView("Loading...")
+            } else if userProfileViewModel.currentUser == nil {
+                // Signed in but no profile -> Show FormView to get user info
+                FormView(
+                    auth: authViewModel,
+                    userProfileViewModel: userProfileViewModel,
+                    weightViewModel: weightViewModel,
+                    dailyLogViewModel: dailyLogViewModel
+                )
+            } else {
+                // Signed in + profile exists -> Show Main App
+                MainTabView(
+                    weightViewModel: weightViewModel,
+                    dailyLogViewModel: dailyLogViewModel,
+                    userProfileViewModel: userProfileViewModel,
+                    authViewModel: authViewModel
+                )
+            }
+        }
+        .onAppear {
+            // If the app starts and we're already signed in, fetch profile right away.
+            if authViewModel.isAuthenticated {
+                Task {
+                    await userProfileViewModel.fetchProfile()
+                    userProfileViewModel.listenToProfile()
+                    dailyLogViewModel.startListening()
+                }
+            }
+        }
+        .onChange(of: authViewModel.isAuthenticated) { _, signedIn in
+                    Task {
+                        if signedIn {
+                            // Signed in -> fetch profile (sets isLoading) and attach listener
+                            await userProfileViewModel.fetchProfile()
+                            userProfileViewModel.listenToProfile()
+                            dailyLogViewModel.startListening()
+                        } else {
+                            // Signed out -> clear everything + remove listeners
+                            dailyLogViewModel.reset()
+                            userProfileViewModel.resetUser()
+                        }
+                    }
+                }
     }
 }
 
@@ -29,67 +79,61 @@ struct MainTabView: View {
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     @ObservedObject var userProfileViewModel: UserProfileViewModel
+    @ObservedObject var authViewModel: AuthViewModel
     @State private var selectedTab = 0
     
     
     var body: some View {
-        if userProfileViewModel.isRegistered == false {
-            OnboardingView(
-                weightViewModel: weightViewModel,
-                dailyLogViewModel: dailyLogViewModel,
-                userProfileViewModel: userProfileViewModel
-            )
-        }
-        else {
-            ZStack {
+        if authViewModel.isAuthenticated {
+            TabView(selection: $selectedTab) {
                 NavigationStack {
-                    TabView(selection: $selectedTab) {
-                        DashboardView(
-                              weightViewModel: weightViewModel,
-                              dailyLogViewModel: dailyLogViewModel,
-                              userProfileViewModel: userProfileViewModel
-                            )
-                            .tabItem {
-                                Image(systemName: "house")
-                                Text("Dashboard")
-                            }
-                            .tag(0)
-                        
-                        BarcodeView(dailyLogViewModel: dailyLogViewModel)
-                            .tabItem {
-                                Image(systemName: "barcode.viewfinder")
-                                Text("Barcode")
-                            }
-                            .tag(1)
-                        
-                        SearchView(dailyLogViewModel: dailyLogViewModel)
-                            .tabItem {
-                                Image(systemName: "plus.circle")
-                                .symbolRenderingMode(.palette)
-                                .background(.green)
-                                .shadow(radius: 5)
-                            }
-                            .tag(2)
-                        
-                        WeightInputView(weightViewModel: weightViewModel)
-                            .tabItem {
-                                Image(systemName: "plus")
-                                Text("Add Weight")
-                            }
-                            .tag(3)
-                        
-                        SettingsView(dailyLogViewModel: dailyLogViewModel)
-                            .tabItem {
-                                Image(systemName: "gear")
-                                Text("Settings")
-                            }
-                            .tag(4)
-                        
-                    }
+                    DashboardView(
+                        weightViewModel: weightViewModel,
+                        dailyLogViewModel: dailyLogViewModel,
+                        userProfileViewModel: userProfileViewModel
+                    )
                 }
+                .tabItem {
+                    Image(systemName: "house")
+                    Text("Dashboard")
+                }
+                .tag(0)
+                
+                BarcodeView(dailyLogViewModel: dailyLogViewModel)
+                    .tabItem {
+                        Image(systemName: "barcode.viewfinder")
+                        Text("Barcode")
+                    }
+                    .tag(1)
+                
+                SearchView(dailyLogViewModel: dailyLogViewModel)
+                    .tabItem {
+                        Image(systemName: "plus.circle")
+                            .foregroundStyle(.green)
+                    }
+                    .tag(2)
+                
+                WeightInputView(weightViewModel: weightViewModel)
+                    .tabItem {
+                        Image(systemName: "plus")
+                        Text("Add Weight")
+                    }
+                    .tag(3)
+                
+                NavigationStack {
+                    SettingsView(
+                        dailyLogViewModel: dailyLogViewModel,
+                        userProfileViewModel: userProfileViewModel,
+                        authViewModel: authViewModel
+                    )
+                }
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Settings")
+                }
+                .tag(4)
             }
             .preferredColorScheme(.dark)
-
         }
     }
 }

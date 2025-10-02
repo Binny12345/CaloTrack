@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		33A18CB82E838716006734B7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 33A18CB72E838716006734B7 /* FirebaseAuth */; };
+		33A18CBA2E838716006734B7 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 33A18CB92E838716006734B7 /* FirebaseDatabase */; };
+		33A18CBC2E838716006734B7 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 33A18CBB2E838716006734B7 /* FirebaseFirestore */; };
+		33A18D652E8BBC99006734B7 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 33A18D642E8BBC99006734B7 /* FirebaseFirestoreCombine-Community */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		33A0E5212E44785B001A70B2 /* s4091285-a1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "s4091285-a1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33A18CBA2E838716006734B7 /* FirebaseDatabase in Frameworks */,
+				33A18D652E8BBC99006734B7 /* FirebaseFirestoreCombine-Community in Frameworks */,
+				33A18CB82E838716006734B7 /* FirebaseAuth in Frameworks */,
+				33A18CBC2E838716006734B7 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +90,10 @@
 			);
 			name = "s4091285-a1";
 			packageProductDependencies = (
+				33A18CB72E838716006734B7 /* FirebaseAuth */,
+				33A18CB92E838716006734B7 /* FirebaseDatabase */,
+				33A18CBB2E838716006734B7 /* FirebaseFirestore */,
+				33A18D642E8BBC99006734B7 /* FirebaseFirestoreCombine-Community */,
 			);
 			productName = "s4091285-a1";
 			productReference = 33A0E5212E44785B001A70B2 /* s4091285-a1.app */;
@@ -108,6 +123,9 @@
 			);
 			mainGroup = 33A0E5182E44785B001A70B2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				33A18CB62E838716006734B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 33A0E5222E44785B001A70B2 /* Products */;
 			projectDirPath = "";
@@ -366,6 +384,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		33A18CB62E838716006734B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		33A18CB72E838716006734B7 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33A18CB62E838716006734B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		33A18CB92E838716006734B7 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33A18CB62E838716006734B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		33A18CBB2E838716006734B7 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33A18CB62E838716006734B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		33A18D642E8BBC99006734B7 /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33A18CB62E838716006734B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreCombine-Community";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 33A0E5192E44785B001A70B2 /* Project object */;
 }

@@ -1,26 +1,62 @@
 # ``s4091285_a1``
 
-## Overview
-Welcome to the documentation for CaloTrack!
+## Introduction
 
-CaloTrack is a nutrition-tracking IOS app that allows users to track their calories, macronutrients and weight progress, search for food items using OpenFoodFacts API, and log meals daily.
+Welcome to the documentation for **CaloTrack** 
 
-This Documentation will serve as a guide to navigating this project.
+A nutrition-tracking SwiftUI application that allows users to track their calories, macronutrients and weight progress, search for food items using OpenFoodFacts API, and log meals daily.
+
+This documentation provides an overview of the app’s architecture, its models, view models, and views, as well as guidance for maintaining and possibly extending the project.  
+
+![Dashboard Screenshot](Dashboard.png)  
+A preview of the main dashboard view in CaloTrack.
+
+---
+
+## Architecture
+
+CaloTrack follows the **MVVM (Model–View–ViewModel)** pattern:  
+- **Models** define data structures.  
+- **ViewModels** manage app state and business logic.  
+- **Views** present data and handle user interactions.  
+
+This ensures the project is modular, testable, and easy to maintain.
+
+---
+
+## Getting Started
+
+1. **Create a Profile**  
+   Enter your personal details and nutrition goals in ``FormView``.  
+
+2. **Log Meals**  
+   Use ``SearchView`` or ``BarcodeView`` to add foods to your daily log.  
+
+3. **Track Progress**  
+   Review your nutrition summary and your weight history in ``DashboardView``.  
 
 
-## Models
+## Topics
+
+### Models
+
+Data structures that define food items, user information, and logs.
 - ``FoodItem``
 - ``UserProfile``
 - ``WeightLog``
 
-## View Models
+### View Models
+
+The business logic and state management layer of CaloTrack.
 - ``BarcodeViewModel``
 - ``DailyLogViewModel``
 - ``MacroCardViewModel``
 - ``UserProfileViewModel``
 - ``WeightViewModel``
 
-## Views
+### Views
+
+SwiftUI components that make up the CaloTrack user interface.
 - ``AllMealsView``
 - ``BarcodeView``
 - ``ContentView``
@@ -35,3 +71,6 @@ This Documentation will serve as a guide to navigating this project.
 - ``SearchView``
 - ``SettingsView``
 - ``WeightInputView``
+
+
+

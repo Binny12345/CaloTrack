@@ -7,21 +7,36 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+
+    return true
+  }
+}
 
 /// Main struct that stores the ContentView with the SwiftData model Container source of truth
 @main
 struct CaloTrackApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     let container: ModelContainer
     
     init() {
-        container = try! ModelContainer(for: FoodItem.self, WeightLog.self, UserProfile.self)
+        container = try! ModelContainer(for: WeightLog.self)
     }
     var body: some Scene {
         WindowGroup {
             ContentView(
-                dailyLogViewModel: DailyLogViewModel(context: container.mainContext),
+                dailyLogViewModel: DailyLogViewModel(),
                 weightViewModel: WeightViewModel(context: container.mainContext),
-                userProfileViewModel: UserProfileViewModel(context: container.mainContext),
+                authViewModel: AuthViewModel(),
+                userProfileViewModel: UserProfileViewModel(),
             )
             .modelContainer(container)
             .preferredColorScheme(.dark)

@@ -25,7 +25,7 @@ https://miro.com/app/board/uXjVJNb32mw=/?share_link_id=762810969982
 ---
 
 ## References
-- Swift Documentation(2025), Apple Website,
+- Swift Documentation (2025), Apple Website,
 https://developer.apple.com/documentation/swift/
 
 ## Generative AI Propmts 
@@ -37,4 +37,8 @@ https://developer.apple.com/documentation/swift/
 - How can i effectively pass my data from the weight logs into the dashboard for viewing
 - Can you try to figure out the bug
 - Can you provide the steps on how i can connect the business logic for onboarding to my contentView
+- How can i improve documentation across my project
+- How would i be able to add this effectively, Clearly state what functions and structs may be needed
+- What barcodes does OpenFoodFacts take for australian food products?
+- Any ideas on how i can make my Combined gesture more obvious to the user?
 - (Note: Code provided wasn't copy and pasted, used as a guide and reference)

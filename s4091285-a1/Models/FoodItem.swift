@@ -8,12 +8,11 @@
 //
 
 import Foundation
-import SwiftData
+import FirebaseFirestore
 
-/// FoodItem is used to store data of each food item and items logged by the user
-@Model
-class FoodItem {
-    var id = UUID()
+/// FoodItem represents a single logged food entry stored in Firebase
+struct FoodItem: Identifiable, Codable, Equatable {
+    var id: String?
     var name: String
     var calories: Double
     var protein: Double
@@ -22,14 +21,16 @@ class FoodItem {
     var mealType: String
     var date: Date
     
-    init(id: UUID = UUID(), name: String, calories: Double, protein: Double, carbs: Double, fats: Double, mealType: String, date: Date) {
-        self.id = id
-        self.name = name
-        self.calories = calories
-        self.protein = protein
-        self.carbs = carbs
-        self.fats = fats
-        self.mealType = mealType
-        self.date = date
+    /// Converts to Firestore dictionary
+    var asDictionary: [String: Any] {
+        [
+            "name": name,
+            "calories": calories,
+            "protein": protein,
+            "carbs": carbs,
+            "fats": fats,
+            "mealType": mealType,
+            "date": date
+        ]
     }
 }

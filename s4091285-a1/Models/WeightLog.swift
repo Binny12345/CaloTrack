@@ -10,7 +10,7 @@
 import Foundation
 import SwiftData
 
-/// WeightLog needed to store the weight of the user
+/// WeightLog is used to store the weight of the user
 @Model
 class WeightLog {
     var id = UUID()

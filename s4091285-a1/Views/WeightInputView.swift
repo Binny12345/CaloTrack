@@ -98,7 +98,7 @@ struct WeightInputView: View {
     }
     /// Used to save the weight into the Database
     private func saveWeight() {
-        weightViewModel.addLog(weight: Double(weight) ?? 0, date: date)
+        weightViewModel.addWeightLog(weight: Double(weight) ?? 0, date: date)
         weight = ""
         showConfirmation = true
     }

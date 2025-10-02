@@ -6,24 +6,69 @@
 //
 
 import SwiftUI
-import SwiftData
-import Foundation
+import FirebaseFirestore
+import FirebaseAuth
 
 /// Used to store and manage details of the current user when they register
+@MainActor
 class UserProfileViewModel: ObservableObject {
     
     // State Variables
     @Published var currentUser: UserProfile?
+    @Published var isLoading: Bool = false
+    @Published var error: String?
     @Published var isRegistered: Bool = false
     
-    private var context: ModelContext
+    // Connects to FirestoreService file and Listener
+    private var firestoreService = FirestoreService()
+    private var listener: ListenerRegistration?
     
-    init(context: ModelContext) {
-        self.context = context
-        loadUser()
+    private var uid: String? {
+        Auth.auth().currentUser?.uid
     }
     
-    /// Adds user to SwiftData/Firebase
+    // MARK: - Fetch the Logged Profile
+    
+    /// Loads the profile for the signed-in user
+    func fetchProfile() async {
+        guard let uid else {
+            self.error = "No User was signed in"
+            self.isRegistered = false
+            return
+        }
+        
+        isLoading = true
+        do {
+            if let profile = try await firestoreService.fetchUserProfile(uid: uid) {
+                self.currentUser = profile
+                self.isRegistered = true
+            } else {
+                self.currentUser = nil
+                self.isRegistered = false
+            }
+        } catch {
+            self.error = error.localizedDescription
+            self.isRegistered = false
+        }
+        isLoading = false
+    }
+    
+    /// Sets a live listener on the user's profile
+    func listenToProfile() {
+        guard let uid else { return }
+        
+        listener?.remove()
+        
+        listener = firestoreService.listenToUserProfile(uid: uid) { [weak self] profile in
+            Task { @MainActor in
+                self?.currentUser = profile
+                self?.isRegistered = (profile != nil)
+            }
+        }
+    }
+    
+    // MARK: - Save Profile
+    /// Saves the completed user profile after FormView is completed
     /// - Parameter name: User's name
     /// - Parameter age: Age that user inputted
     /// - Parameter weight: Weight that user inputted
@@ -34,49 +79,72 @@ class UserProfileViewModel: ObservableObject {
     /// - Parameter carbGoal: Carb goal that the user inputted
     /// - Parameter fatGoal: Fat goal that the user inputted
     /// - Parameter weightGoal: Weight goal decided by the user
-    func addUser(_ name: String,
-                 _ age: String,
-                 _ gender: String,
-                 _ weight: String,
-                 _ height: String,
-                 _ calorieBudget: String,
-                 _ proteinGoal: String,
-                 _ carbGoal: String,
-                 _ fatGoal: String,
-                 _ weightGoal: String
-    ) {
-        let user = UserProfile(
+    func saveProfile(
+        name: String,
+        age: String,
+        gender: String,
+        weight: String,
+        height: String,
+        calorieBudget: String,
+        proteinGoal: String,
+        carbGoal: String,
+        fatGoal: String,
+        weightGoal: String
+    ) async throws {
+        
+        // Sets uid
+        guard let uid else {
+            self.error = "No User Was Signed In"
+            return
+        }
+        
+        // Convert safely from Strings to Correct type
+        guard
+            let ageInt = Int(age),
+            let weightDouble = Double(weight),
+            let heightDouble = Double(height),
+            let calBudget = Int(calorieBudget),
+            let proteinInt = Int(proteinGoal),
+            let carbInt = Int(carbGoal),
+            let fatInt = Int(fatGoal),
+            let weightGoalInt = Int(weightGoal)
+        else {
+            self.error = "Invalid input"
+            return
+        }
+        
+        // Creates a new variable containing the new profile
+        let newProfile = UserProfile(
             name: name,
-            age: Int(age) ?? 0,
+            age: ageInt,
             gender: gender,
-            weight: Double(weight) ?? 0.0,
-            height: Double(height) ?? 0.0,
-            calorieBudget: Int(calorieBudget) ?? 0,
-            proteinGoal: Int(proteinGoal) ?? 0,
-            carbGoal: Int(carbGoal) ?? 0,
-            fatGoal: Int(fatGoal) ?? 0,
-            weightGoal: Int(weightGoal) ?? 0
+            weight: weightDouble,
+            height: heightDouble,
+            calorieBudget: calBudget,
+            proteinGoal: proteinInt,
+            carbGoal: carbInt,
+            fatGoal: fatInt,
+            weightGoal: weightGoalInt
         )
         
-        context.insert(user)
-        try? context.save()
-        
-        currentUser = user
-        self.isRegistered = true
-        
-        // DEBUG: Checking if user is registered
-        print("User registered: \(self.currentUser?.name ?? "nil"), isRegistered: \(self.isRegistered)")
-        
-        
-    }
-    
-    /// Used to load user if existing in the DB
-    private func loadUser() {
-        let descriptor = FetchDescriptor<UserProfile>()
-        if let existing = try? context.fetch(descriptor).first {
-            currentUser = existing
-            isRegistered = true
+        do {
+            // Calls firestoreService method
+            try await firestoreService.saveUserProfile(uid: uid, profile: newProfile)
+            self.currentUser = newProfile
+            self.isRegistered = true
+        } catch {
+            self.error = error.localizedDescription
         }
     }
+    
+    /// Resets logs when user logs out
+    func resetUser() {
+        self.currentUser = nil
+        self.isRegistered = false
+        self.error = nil
+        
+        listener?.remove()
+        listener = nil
+    }
+    
 }
-

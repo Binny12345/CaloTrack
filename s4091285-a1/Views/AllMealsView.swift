@@ -13,40 +13,69 @@ struct AllMealsView: View {
     // Observed objects in order to use it's data
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     
+    @State private var selectedFoodItem: FoodItem?
+    @State private var showManualLog = false
+    
     /// Groups meals by their mealType
     var groupedMeals: [String: [FoodItem]] {
         Dictionary(grouping: dailyLogViewModel.dailyLogs, by: { $0.mealType })
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                
-                // Title
-                Text("All Meals")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-                
-                // Meal Sections
-                ForEach(["Breakfast", "Lunch", "Dinner", "Snack"], id: \.self) { mealType in
-                    if let foods = groupedMeals[mealType], !foods.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text(mealType)
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(.horizontal)
-                            
-                            FoodItemCard(dailyLogViewModel: dailyLogViewModel, foods: foods)
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    // Meal Sections
+                    ForEach(["Breakfast", "Lunch", "Dinner", "Snack"], id: \.self) { mealType in
+                        if let foods = groupedMeals[mealType], !foods.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text(mealType)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .padding(.horizontal)
+                                
+                                FoodItemCard(dailyLogViewModel: dailyLogViewModel, foods: foods)
+                            }
                         }
                     }
+                    
+                    // Add manual food log button
+                    Button(action: { showManualLog = true }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Add Manual Food")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.black)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                    }
+                    .padding(.top, 10)
+                }
+                .padding(.bottom, 20)
+            }
+            .navigationTitle("All Meals")
+            // FoodDetailView sheet
+            .sheet(item: $selectedFoodItem) { item in
+                FoodDetailView(foodItem: item, dailyLogViewModel: dailyLogViewModel)
+            }
+            // ManualLogView sheet
+            .sheet(isPresented: $showManualLog) {
+                ManualLogView(dailyLogViewModel: dailyLogViewModel)
+            }
+            .onAppear {
+                Task {
+                    await dailyLogViewModel.fetchAllLogsDescending()
                 }
             }
-            .padding(.bottom, 20)
         }
     }
 }
+
 
 /// FoodItemCard displays each individual food item
 struct FoodItemCard: View {
@@ -61,17 +90,15 @@ struct FoodItemCard: View {
             ForEach(foods, id: \.id) { food in
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(food.name)
-                            .font(.body)
-                            .fontWeight(.medium)
-                        Text("\(Int(food.calories)) kcal • \(Int(food.protein))g P • \(Int(food.carbs))g C • \(Int(food.fats))g F")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        IndividualFoodData(food: food)
                     }
                     Spacer()
+                    
                     // Delete button
                     Button {
-                        dailyLogViewModel.removeLog(withId: food.id)
+                        Task {
+                            await dailyLogViewModel.removeFoodLog(food)
+                        }
                     } label: {
                         Image(systemName: "trash")
                             .foregroundColor(.red)
@@ -85,6 +112,21 @@ struct FoodItemCard: View {
             }
         }
         .padding(.horizontal)
+    }
+}
+
+struct IndividualFoodData: View {
+    let food: FoodItem
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(food.name)
+                .font(.body)
+                .fontWeight(.medium)
+            Text("\(Int(food.calories)) kcal • \(Int(food.protein))g P • \(Int(food.carbs))g C • \(Int(food.fats))g F")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
     }
 }
 

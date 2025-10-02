@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-/// BarcodeView letsr the user to scan the barcode of a food item in order to log it
+/// BarcodeView lets the user to scan the barcode of a food item in order to log it
 struct BarcodeView: View {
     
     @State private var scannedBarcode: String = ""

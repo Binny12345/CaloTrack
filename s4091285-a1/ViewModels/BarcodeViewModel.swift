@@ -157,7 +157,7 @@ struct ScannerView: UIViewControllerRepresentable {
         }
         
         /// Called by BarcodeViewModel when a barcode is successfully detected.
-        /// - Parameter Barcode: String that was grabbed from AVCapture
+        /// - Parameter barcode: String that was grabbed from AVCapture
         func didFind(barcode: String) {
             // Update the SwiftUI binding, so parent view (BarcodeView) reacts to change.
             scannerView.scannedBarcode = barcode

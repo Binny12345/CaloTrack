@@ -16,12 +16,12 @@ class WeightViewModel: ObservableObject {
     /// Initialises the class with the Loadlogs func
     init(context: ModelContext) {
         self.context = context
-        fetchLogs()
+        fetchWeightLogs()
     }
     
     
     /// Fetches all weight logs
-    func fetchLogs() {
+    func fetchWeightLogs() {
         let descriptor = FetchDescriptor<WeightLog>()
         do {
             weightLogs = try context.fetch(descriptor)
@@ -33,21 +33,21 @@ class WeightViewModel: ObservableObject {
     /// Add a log into the current logs
     /// - Parameter weight: The weight inputted by the user
     /// - Parameter date: The date the log was made
-    func addLog(weight: Double, date: Date) {
+    func addWeightLog(weight: Double, date: Date) {
         let newLog = WeightLog(weight: weight, date: date)
         
         context.insert(newLog)
         saveContext()
-        fetchLogs()
+        fetchWeightLogs()
         print("Successfully added weight log: \(weight) kg on \(date)")
     }
     /// Remove a log into the current logs
     /// - Parameter id: The index for which log the user is removing
-    func removeLog(withId id: UUID) {
+    func removeWeightLog(withId id: UUID) {
         if let logToDelete = weightLogs.first(where: { $0.id == id }) {
             context.delete(logToDelete)
             saveContext()
-            fetchLogs()
+            fetchWeightLogs()
             print("Successfully removed weight log.")
         }
     }
@@ -60,6 +60,7 @@ class WeightViewModel: ObservableObject {
             print("Error saving context: \(error)")
         }
     }
+    
 }
 
 
