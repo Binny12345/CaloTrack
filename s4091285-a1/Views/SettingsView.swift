@@ -21,7 +21,7 @@ struct SettingsView: View {
             Section(header: Text("Settings")) {
                 
                 // MARK: Personal Details/Historical Data
-                NavigationLink(destination: HistoricalDataView(dailyLogViewModel: dailyLogViewModel)) {
+                NavigationLink(destination: PersonalDetailsView(userProfileViewModel: userProfileViewModel)) {
                     HStack {
                         Image(systemName: "person.fill")
                         Text("Personal Details")

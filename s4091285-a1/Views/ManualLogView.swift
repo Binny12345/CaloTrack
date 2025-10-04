@@ -46,90 +46,96 @@ struct ManualLogView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Title
-            TextField("Food Item Name", text: $foodName)
-                .font(.title)
-                .bold()
-            
-            // Base Info
-            VStack(alignment: .leading, spacing: 8) {
-                TextField("Enter Calories", text: $calories)
-                    .keyboardType(.decimalPad)
-                TextField("Enter Protein (g)", text: $protein)
-                    .keyboardType(.decimalPad)
-                TextField("Enter Carbs (g)", text: $carbs)
-                    .keyboardType(.decimalPad)
-                TextField("Enter Fats (g)", text: $fats)
-                    .keyboardType(.decimalPad)
-            }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            
-            // Meal Picker
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Select Meal Type")
-                    .font(.title3)
-                Picker("Meal Type", selection: $selectedMenuType) {
-                    ForEach(options, id: \.self) { option in
-                        Text(option)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                // Title
+                TextField("Food Item Name", text: $foodName)
+                    .font(.title)
+                    .bold()
+                
+                // Base Info
+                VStack(alignment: .leading, spacing: 8) {
+                    TextField("Enter Calories", text: $calories)
+                        .keyboardType(.decimalPad)
+
+                    TextField("Enter Protein (g)", text: $protein)
+                        .keyboardType(.decimalPad)
+
+                    TextField("Enter Carbs (g)", text: $carbs)
+                        .keyboardType(.decimalPad)
+
+                    TextField("Enter Fats (g)", text: $fats)
+                        .keyboardType(.decimalPad)
+                }
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                
+                // Meal Picker
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Select Meal Type")
+                        .font(.title3)
+                    Picker("Meal Type", selection: $selectedMenuType) {
+                        ForEach(options, id: \.self) { option in
+                            Text(option)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                // Serving Size
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Serving Size: \(servingSize, specifier: "%.1f")x")
+                    Stepper("Adjust Portion", value: $servingSize, in: 0.5...5, step: 0.5)
+                }
+                
+                // Adjusted Nutrition
+                VStack(spacing: 12) {
+                    Text("Adjusted Nutrition")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    // Passes Data into a custom struct
+                    HStack {
+                        NutritionItem(label: "Calories", value: Int(adjustedFoodItem.calories), unit: "kcal")
+                        Spacer()
+                        NutritionItem(label: "Protein", value: Int(adjustedFoodItem.protein), unit: "g")
+                        Spacer()
+                        NutritionItem(label: "Carbs", value: Int(adjustedFoodItem.carbs), unit: "g")
+                        Spacer()
+                        NutritionItem(label: "Fats", value: Int(adjustedFoodItem.fats), unit: "g")
                     }
                 }
-                .pickerStyle(.segmented)
-            }
-            
-            // Serving Size
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Serving Size: \(servingSize, specifier: "%.1f")x")
-                Stepper("Adjust Portion", value: $servingSize, in: 0.5...5, step: 0.5)
-            }
-            
-            // Adjusted Nutrition
-            VStack(spacing: 12) {
-                Text("Adjusted Nutrition")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
                 
-                // Passes Data into a custom struct
-                HStack {
-                    NutritionItem(label: "Calories", value: Int(adjustedFoodItem.calories), unit: "kcal")
-                    Spacer()
-                    NutritionItem(label: "Protein", value: Int(adjustedFoodItem.protein), unit: "g")
-                    Spacer()
-                    NutritionItem(label: "Carbs", value: Int(adjustedFoodItem.carbs), unit: "g")
-                    Spacer()
-                    NutritionItem(label: "Fats", value: Int(adjustedFoodItem.fats), unit: "g")
-                }
-            }
-            .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(12)
-            
-            Spacer()
-            
-            // Buttons to add or leave
-            VStack(spacing: 12) {
-                Button("Add to Log") {
-                    Task {
-                        await dailyLogViewModel.addFoodToLog(foodItem: adjustedFoodItem, mealType: selectedMenuType)
+                Spacer()
+                
+                // Buttons to add or leave
+                VStack(spacing: 12) {
+                    Button("Add to Log") {
+                        Task {
+                            await dailyLogViewModel.addFoodToLog(foodItem: adjustedFoodItem, mealType: selectedMenuType)
+                            dismiss()
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    
+                    Button("Close") {
                         dismiss()
                     }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                
-                Button("Close") {
-                    dismiss()
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.red)
-                .foregroundColor(.white)
-                .cornerRadius(10)
             }
+            .scrollDismissesKeyboard(.interactively)
         }
         .task {
             if let foodItem = foodItem {

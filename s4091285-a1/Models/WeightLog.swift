@@ -12,14 +12,16 @@ import SwiftData
 
 /// WeightLog is used to store the weight of the user
 @Model
-class WeightLog {
-    var id = UUID()
+final class WeightLog {
+    @Attribute(.unique) var id = UUID()
     var weight: Double
     var date: Date
+    var userId: String // The Firebase UID tied to weight logs
     
-    init(id: UUID = UUID(), weight: Double, date: Date = Date()) {
+    init(id: UUID = UUID(), weight: Double, date: Date = Date(), userId: String) {
         self.id = id
         self.weight = weight
         self.date = date
+        self.userId = userId
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 import Charts
 import SwiftData
+import FirebaseAuth
 
 // MARK: - Custom Welcome Layout
 /// The main home screen showing calories, macros, weight progress, and navigation into other sections. Acts as the hub for data visualization.
@@ -163,23 +164,7 @@ struct DashboardView: View {
                         .bold()
                     Text("Goal: \(weightGoal)kg")
                         .foregroundStyle(.secondary)
-                    
-                    // Chart that maps the weight lops inputted from WeightVM
-                    // Creates points of each weight log and lines connecting them
-                    Chart(weightViewModel.weightLogs) { log in
-                        LineMark(
-                            x: .value("Date", log.date),
-                            y: .value("Weight", log.weight)
-                        )
-                        PointMark(
-                            x: .value("Date", log.date),
-                            y: .value("Weight", log.weight)
-                        )
-                        .symbol(.circle)
-                        .symbolSize(30)
-                        .foregroundStyle(.green)
-                    }
-                    .frame(height: 200)
+                    WeightChart(uid: Auth.auth().currentUser?.uid ?? "")
                 }
                 .padding()
                 .background(Color(.systemGray6))
@@ -227,6 +212,40 @@ struct ProgressRingView: View {
             }
         }
         .frame(width: 120, height: 120)
+    }
+}
+
+/// Displays the chart of all the weight logs the user inputted
+struct WeightChart: View {
+    @Query private var userWeightLogs: [WeightLog]
+
+    init(uid: String) {
+        _userWeightLogs = Query(
+            filter: #Predicate<WeightLog> { log in
+                log.userId == uid
+            },
+            sort: \.date,
+            order: .forward
+        )
+    }
+
+    var body: some View {
+        // Chart that maps the weight lops inputted from WeightVM
+        // Creates points of each weight log and lines connecting them
+        Chart(userWeightLogs) { log in
+            LineMark(
+                x: .value("Date", log.date),
+                y: .value("Weight", log.weight)
+            )
+            PointMark(
+                x: .value("Date", log.date),
+                y: .value("Weight", log.weight)
+            )
+            .symbol(.circle)
+            .symbolSize(30)
+            .foregroundStyle(.green)
+        }
+        .frame(height: 200)
     }
 }
     

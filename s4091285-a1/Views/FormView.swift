@@ -32,7 +32,7 @@ struct FormView: View {
     
     private let firestoreService = FirestoreService()
     
-    let genders = ["Male", "Female" ]
+    let genders = ["Male", "Female"]
     
     
     var body: some View {
@@ -54,6 +54,7 @@ struct FormView: View {
                                 .tag(option)
                         }
                     }
+                    .pickerStyle(.menu)
                 }
                 
                 Section("Body Stats") {

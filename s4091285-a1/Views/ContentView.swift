@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import SwiftData
+import FirebaseAuth
 
 /// Main View that displays MainTabView and the single sources of truth for multiple ViewModels
 struct ContentView: View {
@@ -113,7 +115,10 @@ struct MainTabView: View {
                     }
                     .tag(2)
                 
-                WeightInputView(weightViewModel: weightViewModel)
+                WeightInputView(
+                    weightViewModel: weightViewModel,
+                    uid: Auth.auth().currentUser?.uid ?? ""
+                )
                     .tabItem {
                         Image(systemName: "plus")
                         Text("Add Weight")

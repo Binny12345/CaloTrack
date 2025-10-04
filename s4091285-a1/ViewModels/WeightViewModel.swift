@@ -17,6 +17,7 @@ class WeightViewModel: ObservableObject {
     init(context: ModelContext) {
         self.context = context
         fetchWeightLogs()
+        print("DEBUG: Context \(context)")
     }
     
     
@@ -30,16 +31,28 @@ class WeightViewModel: ObservableObject {
         }
     }
     
-    /// Add a log into the current logs
+    /// Add a log into the current logs if one doesn't already exist
     /// - Parameter weight: The weight inputted by the user
     /// - Parameter date: The date the log was made
-    func addWeightLog(weight: Double, date: Date) {
-        let newLog = WeightLog(weight: weight, date: date)
+    func addWeightLog(weight: Double, date: Date, uid: String) -> String {
+        let newLog = WeightLog(weight: weight, date: date, userId: uid)
         
+        // Validating if user already logged today
+        // If they did, block the new log
+        let userLogs = weightLogs.filter { $0.userId == uid }
+        let alreadyLoggedToday = userLogs.contains { log in
+            Calendar.current.isDate(log.date, inSameDayAs: date)
+        }
+        
+        guard !alreadyLoggedToday else {
+            return "Already logged a weight for today!"
+        }
         context.insert(newLog)
         saveContext()
         fetchWeightLogs()
+        
         print("Successfully added weight log: \(weight) kg on \(date)")
+        return ""
     }
     /// Remove a log into the current logs
     /// - Parameter id: The index for which log the user is removing

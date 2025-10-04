@@ -28,8 +28,16 @@ struct CaloTrackApp: App {
     let container: ModelContainer
     
     init() {
-        container = try! ModelContainer(for: WeightLog.self)
+        do {
+            container = try ModelContainer(for: WeightLog.self)
+            print("Model Container created successfully.")
+        } catch {
+            // Fallback container to satisfy compiler requirements
+            print("Failed to create Model Container: \(error.localizedDescription)")
+            container = try! ModelContainer(for: Schema([])) // Empty fallback
+        }
     }
+    
     var body: some Scene {
         WindowGroup {
             ContentView(

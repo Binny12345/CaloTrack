@@ -18,7 +18,7 @@ struct AllMealsView: View {
     
     /// Groups meals by their mealType
     var groupedMeals: [String: [FoodItem]] {
-        Dictionary(grouping: dailyLogViewModel.dailyLogs, by: { $0.mealType })
+        Dictionary(grouping: dailyLogViewModel.todaysLogs, by: { $0.mealType })
     }
     
     var body: some View {

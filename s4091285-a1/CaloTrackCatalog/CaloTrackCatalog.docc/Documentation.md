@@ -68,6 +68,7 @@ SwiftUI components that make up the CaloTrack user interface.
 - ``MacroCardView``
 - ``ManualLogView``
 - ``OnboardingView``
+- ``PersonalDetailsView``
 - ``SearchView``
 - ``SettingsView``
 - ``WeightInputView``
