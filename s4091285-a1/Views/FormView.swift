@@ -48,7 +48,7 @@ struct FormView: View {
                         .keyboardType(.numberPad)
                     
                     
-                    Picker("Gender", selection: $gender) {
+                    Picker("Sex", selection: $gender) {
                         ForEach(genders, id: \.self) { option in
                             Text(option)
                                 .tag(option)

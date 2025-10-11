@@ -34,7 +34,8 @@ struct CaloTrackApp: App {
         } catch {
             // Fallback container to satisfy compiler requirements
             print("Failed to create Model Container: \(error.localizedDescription)")
-            container = try! ModelContainer(for: Schema([])) // Empty fallback
+            let config = ModelConfiguration(isStoredInMemoryOnly: true)
+            container = try! ModelContainer(for: WeightLog.self, configurations: config)
         }
     }
     

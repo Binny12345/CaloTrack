@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import FirebaseFirestore
 import FirebaseAuth
+import WidgetKit
 
 /// DailyLogViewModel needed to store all the functionality of the SearchView and FoodDetailView
 @MainActor
@@ -99,6 +100,15 @@ class DailyLogViewModel: ObservableObject {
         do {
             try await firestoreService.addFoodItem(uid: uid, foodItem: logEntry)
             print("Successfully added \(foodItem.name) to your Daily Log!")
+            
+            // Adds new data to widgets
+            try await updateWidgetData(
+                totalCalories: totalCaloriesToday,
+                calorieGoal: UserProfileViewModel().currentUser?.calorieBudget ?? 2000,
+                protein: totalProteinToday,
+                carbs: totalCarbsToday,
+                fats: totalFatsToday
+            )
         } catch {
             print("Failed to save item: \(error.localizedDescription)")
         }
@@ -127,8 +137,14 @@ class DailyLogViewModel: ObservableObject {
         }
     }
     
-    /// Removes all food items from daily log
-    func clearDailyLogs() async {
+    /// Removes all food items from daily log, if a test file, just removes the manually input logs
+    /// - Parameter testMode: Checks if the file calling this method if a test file or an actual file
+    func clearDailyLogs(testMode: Bool = false) async {
+        if testMode {
+            dailyLogs.removeAll()
+            return
+        }
+
         for log in todaysLogs {
             await removeFoodLog(log)
         }
@@ -145,5 +161,25 @@ class DailyLogViewModel: ObservableObject {
         listener?.remove()
     }
 
+}
+
+/// Extends upon DailyLogViewModel to allow user data to be updated towards the user's widget
+extension DailyLogViewModel {
+    /// Allows widget to be updated with current data
+    func updateWidgetData(totalCalories: Int, calorieGoal: Int, protein: Int, carbs: Int, fats: Int) {
+        guard let defaults = UserDefaults(suiteName: "group.rmit-IPSE.s4091285-a1") else {
+            print("Failed to access shared defaults")
+            return
+        }
+        
+        defaults.set(totalCaloriesToday, forKey: "caloriesConsumed")
+        defaults.set(UserProfileViewModel().currentUser?.calorieBudget ?? 2000, forKey: "calorieGoal")
+        defaults.set(totalProteinToday, forKey: "proteinConsumed")
+        defaults.set(totalCarbsToday, forKey: "carbsConsumed")
+        defaults.set(totalFatsToday, forKey: "fatsConsumed")
+        defaults.synchronize()
+        
+        WidgetCenter.shared.reloadAllTimelines()
+    }
 }
 

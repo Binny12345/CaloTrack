@@ -8,9 +8,11 @@ import SwiftUI
 import SwiftData
 
 /// WeightViewModel needed to store all the functionality of the WeightInputView
+@MainActor
 class WeightViewModel: ObservableObject {
     
     private var context: ModelContext
+    var userID: String = ""
     @Published var weightLogs: [WeightLog] = []
     
     /// Initialises the class with the Loadlogs func
@@ -20,12 +22,20 @@ class WeightViewModel: ObservableObject {
         print("DEBUG: Context \(context)")
     }
     
+    init(context: ModelContext, userID: String) {
+        self.context = context
+        self.userID = userID
+        fetchWeightLogs()
+    }
+    
     
     /// Fetches all weight logs
     func fetchWeightLogs() {
+        print("DEBUG: Fetching on main thread? \(Thread.isMainThread)")
         let descriptor = FetchDescriptor<WeightLog>()
         do {
             weightLogs = try context.fetch(descriptor)
+            print("DEBUG: Fetch count \(weightLogs.count)")
         } catch {
             print("Failed to fetch weight logs: \(error)")
         }

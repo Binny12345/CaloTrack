@@ -27,6 +27,29 @@ class UserProfileViewModel: ObservableObject {
         Auth.auth().currentUser?.uid
     }
     
+    // Non-async initialiser for testing purposes
+    convenience init(mock: Bool = false) {
+        self.init()
+        if mock {
+            self.currentUser = nil
+            self.isRegistered = false
+        }
+    }
+    
+    // Default initializer for production (doesn’t fetch immediately)
+    init() {
+        self.currentUser = nil
+        self.isRegistered = false
+    }
+    
+    init(forTesting: Bool = false) async throws {
+        if !forTesting {
+           await fetchProfile()
+        } else {
+            self.currentUser = nil
+        }
+    }
+    
     // MARK: - Fetch the Logged Profile
     
     /// Loads the profile for the signed-in user

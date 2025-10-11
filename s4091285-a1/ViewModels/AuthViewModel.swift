@@ -34,6 +34,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
+    
     func signUp() async {
         error = nil
         do {
