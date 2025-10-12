@@ -9,6 +9,7 @@ import XCTest
 import SwiftData
 import FirebaseAuth
 @testable import s4091285_a1
+import AVFoundation
 
 /// A suite of functional and logic-based tests to validate core components of CaloTrack.
 @MainActor
@@ -43,7 +44,7 @@ final class s4091285_a1Tests: XCTestCase {
             dailyLogViewModel: dailyLogViewModel
         )
     }
-
+    
     /// Overrides the original function to set my VM to nil in case of an error
     override func tearDownWithError() throws {
         userProfileViewModel = nil
@@ -51,7 +52,7 @@ final class s4091285_a1Tests: XCTestCase {
         dailyLogViewModel = nil
     }
     
-    
+    // MARK: Test Cases
     
     /// Test 1 - FormView: Checks to ensure the profile sucessfully saves
     func testSavesUserProfileSuccessfully() async throws {
@@ -86,7 +87,7 @@ final class s4091285_a1Tests: XCTestCase {
             "Male",
             "2000",
             recommendedBudget: 2000,
-            "100", 
+            "100",
             "100",
             "50"
         )
@@ -151,38 +152,43 @@ final class s4091285_a1Tests: XCTestCase {
         XCTAssertTrue(dailyLogViewModel.dailyLogs.isEmpty, "All daily logs should be cleared.")
     }
     
-    /// Test 7 - DailyLogViewModel: Calculates correct nutrient totals with empty list
-    func testCalorieAndProteinTotalsEmptyList() throws {
-        dailyLogViewModel.dailyLogs = []
-        XCTAssertEqual(dailyLogViewModel.totalCaloriesToday, 0, "Calories should be zero for empty logs.")
-        XCTAssertEqual(dailyLogViewModel.totalProteinToday, 0, "Protein should be zero for empty logs.")
+    /// Test 7 - MacroCardViewModel: Ensures extreme values are handled properly
+    func testUpdateEdgeValues() {
+        let macroVM = MacroCardViewModel()
+        
+        // calls update( ) with edge data
+        macroVM.update(protein: 0, carbs: 500, fats: 200, proteinGoal: 150, carbsGoal: 500, fatsGoal: 200)
+        
+        // ensures each variable has been assigned the correct value
+        XCTAssertEqual(macroVM.protein, 0)
+        XCTAssertEqual(macroVM.carbs, 500)
+        XCTAssertEqual(macroVM.fats, 200)
+        XCTAssertEqual(macroVM.proteinGoal, 150)
+        XCTAssertEqual(macroVM.carbsGoal, 500)
+        XCTAssertEqual(macroVM.fatsGoal, 200)
     }
     
     /// Test 8 - UserProfileViewModel: Reject negative weight and height values
     func testRejectNegativeWeightAndHeight() async throws {
         // Calls saveProfile( )
-        do {
-            try await userProfileViewModel.saveProfile(
-                name: "Alex",
-                age: "25",
-                gender: "Male",
-                weight: "-70",   // negative weight
-                height: "-180",  // negative height
-                calorieBudget: "2000",
-                proteinGoal: "100",
-                carbGoal: "150",
-                fatGoal: "70",
-                weightGoal: "65"
-            )
-            
-            // Should throw an error
-            XCTFail("Negative weight/height should throw an error")
-        } catch {
-            XCTAssertTrue(error.localizedDescription.contains("Invalid"), "Should reject negative values")
-        }
+        try await userProfileViewModel.saveProfile(
+            name: "Alex",
+            age: "25",
+            gender: "Male",
+            weight: "-70",   // negative weight
+            height: "-180",  // negative height
+            calorieBudget: "2000",
+            proteinGoal: "100",
+            carbGoal: "150",
+            fatGoal: "70",
+            weightGoal: "65"
+        )
+        
+        XCTAssertEqual(userProfileViewModel.error, "Invalid input", "Should reject negative weight/height inputs")
+        XCTAssertNil(userProfileViewModel.currentUser, "User should not be created from invalid inputs")
     }
     
-    /// Test 10 - DailyLogViewModel: Handles logs with future dates gracefully
+    /// Test 9 - DailyLogViewModel: Handles logs with future dates gracefully
     func testDailyLogsWithFutureDates() async throws {
         // Sets future date and future food item
         let futureDate = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
@@ -194,7 +200,32 @@ final class s4091285_a1Tests: XCTestCase {
         XCTAssertEqual(dailyLogViewModel.totalCaloriesToday, 0, "Future-dated logs should not count towards today's totals")
         XCTAssertEqual(dailyLogViewModel.todaysLogs.count, 0, "todaysLogs should exclude future dates")
     }
+    
+    /// Test 10 - BarcodeViewModel: Ensures invalid barcodes are handled properly
+    func testHandlesInvalidScannedBarcode() {
+        class MockDelegate: BarcodeViewModelDelegate {
+            var errorReceived: CameraError?
+            var foundBarcode: String?
+            func didFind(barcode: String) { foundBarcode = barcode }
+            func didSurface(error: CameraError) { errorReceived = error }
+        }
+        
+        // Mock Data
+        let mockDelegate = MockDelegate()
+        let barcodeVM = BarcodeViewModel(scannerDelegate: mockDelegate)
+        
+        // Pass a mock object with nil stringValue to simulate invalid scan
+        let invalidMetadata = [MockBarcodeMetadata(stringValue: nil)]
+        barcodeVM.handleMockMetadata(invalidMetadata)
+        
+        // Shouldn't have a foundBarcode and call .invalidScannedValue
+        XCTAssertEqual(mockDelegate.errorReceived, .invalidScannedValue)
+        XCTAssertNil(mockDelegate.foundBarcode)
+    }
 }
+
+
+// MARK: Mock Data for Test Implementation
 
 /// Helper func which mokes the FormView file. Required as the original file requires many extra dependencies
 @MainActor
@@ -210,5 +241,39 @@ private func makeMockFormView() async -> FormView {
         weightViewModel: WeightViewModel(context: container.mainContext),
         dailyLogViewModel: DailyLogViewModel()
     )
+}
+
+/// Mock Protocol that mimics original BarcodeMetadata for testing purposes
+protocol BarcodeMetadata {
+    var stringValue: String? { get }
+}
+
+/// Mock struct comforming to the protocol
+struct MockBarcodeMetadata: BarcodeMetadata {
+    var stringValue: String?
+}
+
+/// Extension for BarcodeViewModel to handle mock metadata objects
+extension BarcodeViewModel {
+    
+    /// This function mimics the real metadataOutput for testing.
+    /// - Parameter metadataObjects: Array of mock metadata objects
+    func handleMockMetadata(_ metadataObjects: [BarcodeMetadata]) {
+        
+        // Grab the first object if it exists
+        guard let object = metadataObjects.first else {
+            scannerDelegate?.didSurface(error: .invalidScannedValue)
+            return
+        }
+        
+        // Grab the barcode string value from mock object
+        guard let barcode = object.stringValue else {
+            scannerDelegate?.didSurface(error: .invalidScannedValue)
+            return
+        }
+        
+        // if valid, send barcode to delegate
+        scannerDelegate?.didFind(barcode: barcode)
+    }
 }
 

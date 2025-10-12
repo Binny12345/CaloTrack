@@ -13,6 +13,8 @@ import FirebaseAuth
 /// Handles the business logic around authentication between Firebase and CaloTrack
 @MainActor
 final class AuthViewModel: ObservableObject {
+    
+    // Published variables 
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var error: String?
