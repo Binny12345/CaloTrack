@@ -18,27 +18,30 @@ struct ContentView: View {
     
     var body: some View {
         Group {
+            // User not signed in -> Show Signin/Onboarding View
             if !authViewModel.isAuthenticated {
-                // User not signed in -> Show Signin/Onboarding View
                 OnboardingView(
                     weightViewModel: weightViewModel,
                     dailyLogViewModel: dailyLogViewModel,
                     userProfileViewModel: userProfileViewModel,
                     authViewModel: authViewModel
                 )
-            } else if userProfileViewModel.isLoading {
+                
                 // Signed in but profile still loading
+            } else if userProfileViewModel.isLoading {
                 ProgressView("Loading...")
-            } else if userProfileViewModel.currentUser == nil {
+                
                 // Signed in but no profile -> Show FormView to get user info
+            } else if userProfileViewModel.currentUser == nil {
                 FormView(
                     auth: authViewModel,
                     userProfileViewModel: userProfileViewModel,
                     weightViewModel: weightViewModel,
                     dailyLogViewModel: dailyLogViewModel
                 )
-            } else {
+                
                 // Signed in + profile exists -> Show Main App
+            } else {
                 MainTabView(
                     weightViewModel: weightViewModel,
                     dailyLogViewModel: dailyLogViewModel,
@@ -86,6 +89,7 @@ struct MainTabView: View {
     
     
     var body: some View {
+        // Checks if user is authenticated
         if authViewModel.isAuthenticated {
             TabView(selection: $selectedTab) {
                 NavigationStack {

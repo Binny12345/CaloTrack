@@ -19,13 +19,10 @@ class UserProfileViewModel: ObservableObject {
     @Published var error: String?
     @Published var isRegistered: Bool = false
     
-    // Connects to FirestoreService file and Listener
+    // Connects to FirestoreService file, Listener and current user's UID
     private var firestoreService = FirestoreService()
     private var listener: ListenerRegistration?
-    
-    private var uid: String? {
-        Auth.auth().currentUser?.uid
-    }
+    private var uid: String? { Auth.auth().currentUser?.uid }
     
     // Non-async initialiser for testing purposes
     convenience init(mock: Bool = false) {
@@ -36,12 +33,13 @@ class UserProfileViewModel: ObservableObject {
         }
     }
     
-    // Default initializer for production (doesn’t fetch immediately)
+    /// Default initializer for Main app (doesn’t fetch immediately)
     init() {
         self.currentUser = nil
         self.isRegistered = false
     }
     
+    /// Initialiser for testing purposes
     init(forTesting: Bool = false) async throws {
         if !forTesting {
            await fetchProfile()
@@ -63,6 +61,7 @@ class UserProfileViewModel: ObservableObject {
         isLoading = true
         do {
             if let profile = try await firestoreService.fetchUserProfile(uid: uid) {
+                // If user exist, set current user make them registered
                 self.currentUser = profile
                 self.isRegistered = true
             } else {
@@ -80,7 +79,7 @@ class UserProfileViewModel: ObservableObject {
     func listenToProfile() {
         guard let uid else { return }
         
-        listener?.remove()
+        listener?.remove() // Resets listener
         
         listener = firestoreService.listenToUserProfile(uid: uid) { [weak self] profile in
             Task { @MainActor in
@@ -120,18 +119,22 @@ class UserProfileViewModel: ObservableObject {
             self.error = "No User Was Signed In"
             return
         }
-        
         // Convert safely from Strings to Correct type
-        guard
-            let ageInt = Int(age),
-            let weightDouble = Double(weight),
-            let heightDouble = Double(height),
-            let calBudget = Int(calorieBudget),
-            let proteinInt = Int(proteinGoal),
-            let carbInt = Int(carbGoal),
-            let fatInt = Int(fatGoal),
-            let weightGoalInt = Int(weightGoal)
+        guard let ageInt = Int(age),
+              let weightDouble = Double(weight),
+              let heightDouble = Double(height),
+              let calBudget = Int(calorieBudget),
+              let proteinInt = Int(proteinGoal),
+              let carbInt = Int(carbGoal),
+              let fatInt = Int(fatGoal),
+              let weightGoalInt = Int(weightGoal)
         else {
+            self.error = "Invalid input"
+            return
+        }
+        
+        // validates if weight and height are below 1
+        if weightDouble < 1 || heightDouble < 1 {
             self.error = "Invalid input"
             return
         }
@@ -166,6 +169,7 @@ class UserProfileViewModel: ObservableObject {
         self.isRegistered = false
         self.error = nil
         
+        // Reset listener
         listener?.remove()
         listener = nil
     }

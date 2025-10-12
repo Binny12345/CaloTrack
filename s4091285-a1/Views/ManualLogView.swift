@@ -135,10 +135,11 @@ struct ManualLogView: View {
                     .cornerRadius(10)
                 }
             }
-            .scrollDismissesKeyboard(.interactively)
+            .scrollDismissesKeyboard(.interactively) // Lets user exit keyboard view
         }
         .task {
             if let foodItem = foodItem {
+                // Sets FoodItem's mealType and serving size
                 selectedMenuType = foodItem.mealType
                 servingSize = 1.0
             }

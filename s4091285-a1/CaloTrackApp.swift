@@ -11,6 +11,7 @@ import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
 
+/// Configurations for enabling Firebase to the Application
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -24,9 +25,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct CaloTrackApp: App {
     
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate // Passed in delegate from AppDelegate class
     let container: ModelContainer
     
+    // Initialise the SwiftData Container
     init() {
         do {
             container = try ModelContainer(for: WeightLog.self)
@@ -39,6 +41,7 @@ struct CaloTrackApp: App {
         }
     }
     
+    // Displays the Main View
     var body: some Scene {
         WindowGroup {
             ContentView(
@@ -47,8 +50,8 @@ struct CaloTrackApp: App {
                 authViewModel: AuthViewModel(),
                 userProfileViewModel: UserProfileViewModel(),
             )
-            .modelContainer(container)
-            .preferredColorScheme(.dark)
+            .modelContainer(container) // SwiftData container for WeightLogs
+            .preferredColorScheme(.dark) // Enforces a dark mode app wide
         }
     }
 }

@@ -29,6 +29,7 @@ struct CaloTrackWidgetView: View {
 
 /// Defines the UI of the small Widget (Calories only)
 struct SmallCalorieRing: View {
+    /// Variable created from CalorieEntry Model
     var entry: CalorieEntry
     
     var progress: Double {
@@ -64,6 +65,7 @@ struct SmallCalorieRing: View {
 
 /// Defines the UI of the Medium Widget (Calories and Macros)
 struct MediumCalorieAndMacrosView: View {
+    /// Variable created from CalorieEntry Model
     var entry: CalorieEntry
     
     var body: some View {

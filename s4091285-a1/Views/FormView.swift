@@ -35,6 +35,7 @@ struct FormView: View {
     let genders = ["Male", "Female"]
     
     
+    // Form
     var body: some View {
         VStack {
             Text("Enter your Details Below")
@@ -110,8 +111,8 @@ struct FormView: View {
         }
     }
     
+    /// Helper Function to handle validating and passing the data to saveProfile( )
     private func handleSubmit() async {
-        
         errorMsg = inputValidation(
             name, age, weight, height, gender, calorieBudget,
             recommendedBudget: recommendedBudget(age, weight, height, gender),

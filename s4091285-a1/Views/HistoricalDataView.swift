@@ -24,8 +24,10 @@ struct HistoricalDataView: View {
     var body: some View {
         NavigationView {
             List {
+                // Groups logs by day
                 ForEach(groupedLogs, id: \.date) { group in
                     Section(header: Text(group.date, style: .date)) {
+                        // For Each day, display all logs
                         ForEach(group.logs) { log in
                             DataCardView(log: log)
                                 .padding(.vertical, 4)
@@ -44,9 +46,9 @@ struct HistoricalDataView: View {
     }
 }
 
-/// Formats and displays a single FoodItem
+/// Helper struct to format and display a single FoodItem
 struct DataCardView: View {
-    let log: FoodItem
+    let log: FoodItem // Passed in fooditem
     
     var body: some View {
         HStack {

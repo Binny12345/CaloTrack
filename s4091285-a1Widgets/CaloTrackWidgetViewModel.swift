@@ -8,6 +8,7 @@
 import WidgetKit
 import SwiftUI
 
+/// Manages the fetching and handling of the shared data
 struct Provider: TimelineProvider {
     /// Defined as a backup data
     func placeholder(in context: Context) -> CalorieEntry {
@@ -25,6 +26,7 @@ struct Provider: TimelineProvider {
     /// - Parameter context: The context of the widget
     /// - Parameter completion: How the data should return
     func getSnapshot(in context: Context, completion: @escaping (CalorieEntry) -> Void) {
+        // Grabs data from loading UserDefaults
         let entry = loadUserData()
         completion(entry)
     }
@@ -33,9 +35,14 @@ struct Provider: TimelineProvider {
     /// - Parameter context: The context of the widget
     /// - Parameter completion: How the data should return
     func getTimeline(in context: Context, completion: @escaping (Timeline<CalorieEntry>) -> Void) {
+        // Grabs data from loading UserDefaults
         let entry = loadUserData()
-        print("DEBUG - loadUserData(): \(entry) ")
         
+        // DEBUG Comments
+        print("DEBUG - loadUserData(): \(entry) ")
+        print(UserDefaults(suiteName: "group.rmit-IPSE.s4091285-a1")!.dictionaryRepresentation())
+        
+        // Adds to timeline so it displays on widget
         let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(60 * 1))) // refresh every 1 min
         completion(timeline)
     }

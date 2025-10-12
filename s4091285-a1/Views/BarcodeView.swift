@@ -9,9 +9,9 @@ import SwiftUI
 /// BarcodeView lets the user to scan the barcode of a food item in order to log it
 struct BarcodeView: View {
     
-    @State private var scannedBarcode: String = ""
-    @State private var alertItem: AlertItem?
-    @State private var product: FoodSearchResult? = nil
+    @State private var scannedBarcode: String = "" // Gathered barcode
+    @State private var alertItem: AlertItem? // alert state for managing alert pop ups
+    @State private var product: FoodSearchResult? = nil // product found from barcode
     
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
     

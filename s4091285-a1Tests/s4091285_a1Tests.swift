@@ -14,6 +14,7 @@ import FirebaseAuth
 @MainActor
 final class s4091285_a1Tests: XCTestCase {
     
+    // Required Observed objects to implement test cases
     var userProfileViewModel: UserProfileViewModel!
     var weightViewModel: WeightViewModel!
     var dailyLogViewModel: DailyLogViewModel!
@@ -68,7 +69,9 @@ final class s4091285_a1Tests: XCTestCase {
             weightGoal: String(65)
         )
         
-        XCTAssertNotNil(userProfileViewModel.currentUser)
+        XCTAssertNotNil(userProfileViewModel.currentUser) // Should not be nil
+        
+        // Both inputs should be correct
         XCTAssertEqual(userProfileViewModel.currentUser?.name, "Alex")
         XCTAssertEqual(userProfileViewModel.currentUser?.calorieBudget, 2000)
     }
@@ -87,21 +90,30 @@ final class s4091285_a1Tests: XCTestCase {
             "100",
             "50"
         )
+        
+        // Shouldn't pass as name is empty
         XCTAssertTrue(message.contains("Name Must"), "Should reject invalid or empty name.")
     }
     
     /// Test 3 - FormView: Recommended Budget for Male is Correct
     func testRecommendedBudget_MaleCalculation() throws {
-        let result = formView.recommendedBudget("25", "80", "180", "Male")
+        let result = formView.recommendedBudget("25", "80", "180", "Male") // Adds data for male
         
+        // Both should return true
         XCTAssertGreaterThan(result, 0)
         XCTAssertTrue(result > 1500 && result < 2500, "Male calorie budget out of expected range.")
     }
     
     /// Test 4 - FormView: Recommended Budget handles Invalid Inputs Gracefully
     func testRecommendedBudget_InvalidInput() throws {
-        let result = formView.recommendedBudget("abc", "xyz", "?", "Other")
+        let result = formView.recommendedBudget(
+            "abc",
+            "xyz",
+            "?", // Invalid input
+            "Other"
+        )
         
+        // Should equal 0
         XCTAssertEqual(result, 0, "Invalid numeric input should result in 0 calorie estimate.")
     }
     
@@ -114,22 +126,28 @@ final class s4091285_a1Tests: XCTestCase {
         // Inject manually since Firestore is mocked out
         dailyLogViewModel.dailyLogs = [food1, food2]
         
+        // both should be correct
         XCTAssertEqual(dailyLogViewModel.totalCaloriesToday, 800, "Total calories should sum all food entries.")
         XCTAssertEqual(dailyLogViewModel.totalProteinToday, 45, "Total protein should sum correctly.")
     }
     
     /// Test 6 - SettingsView: ClearDailyLogs should remove all current logs
     func testResetClearsUserLogs() async throws {
+        // Create mock food items
         let food1 = FoodItem(id: nil, name: "Apple", calories: 95, protein: 0, carbs: 25, fats: 0, mealType: "Snack", date: Date())
         let food2 = FoodItem(id: nil, name: "Egg", calories: 78, protein: 6, carbs: 1, fats: 5, mealType: "Breakfast", date: Date())
         
+        // Inject manually since Firestore is mocked out
         dailyLogViewModel.dailyLogs = [food1, food2]
+        
         XCTAssertEqual(dailyLogViewModel.dailyLogs.count, 2, "Should start with two logs.")
         
+        // Calls method using testMode "true"
         do {
             await dailyLogViewModel.clearDailyLogs(testMode: true)
-            print("DEBUG: \(dailyLogViewModel.dailyLogs)")
         }
+        
+        // Should return true
         XCTAssertTrue(dailyLogViewModel.dailyLogs.isEmpty, "All daily logs should be cleared.")
     }
     
@@ -139,8 +157,43 @@ final class s4091285_a1Tests: XCTestCase {
         XCTAssertEqual(dailyLogViewModel.totalCaloriesToday, 0, "Calories should be zero for empty logs.")
         XCTAssertEqual(dailyLogViewModel.totalProteinToday, 0, "Protein should be zero for empty logs.")
     }
-
-
+    
+    /// Test 8 - UserProfileViewModel: Reject negative weight and height values
+    func testRejectNegativeWeightAndHeight() async throws {
+        // Calls saveProfile( )
+        do {
+            try await userProfileViewModel.saveProfile(
+                name: "Alex",
+                age: "25",
+                gender: "Male",
+                weight: "-70",   // negative weight
+                height: "-180",  // negative height
+                calorieBudget: "2000",
+                proteinGoal: "100",
+                carbGoal: "150",
+                fatGoal: "70",
+                weightGoal: "65"
+            )
+            
+            // Should throw an error
+            XCTFail("Negative weight/height should throw an error")
+        } catch {
+            XCTAssertTrue(error.localizedDescription.contains("Invalid"), "Should reject negative values")
+        }
+    }
+    
+    /// Test 10 - DailyLogViewModel: Handles logs with future dates gracefully
+    func testDailyLogsWithFutureDates() async throws {
+        // Sets future date and future food item
+        let futureDate = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        let futureFood = FoodItem(id: nil, name: "FutureMeal", calories: 500, protein: 30, carbs: 40, fats: 10, mealType: "Dinner", date: futureDate)
+        
+        dailyLogViewModel.dailyLogs = [futureFood]
+        
+        // Shouldn't be able to count towards todays total calorie or logs
+        XCTAssertEqual(dailyLogViewModel.totalCaloriesToday, 0, "Future-dated logs should not count towards today's totals")
+        XCTAssertEqual(dailyLogViewModel.todaysLogs.count, 0, "todaysLogs should exclude future dates")
+    }
 }
 
 /// Helper func which mokes the FormView file. Required as the original file requires many extra dependencies

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// SearchView for the user to search for their desired FoodItem
+/// Allows for the user to search for their desired FoodItem
 struct SearchView: View {
     @State private var searchText = ""
     @State private var allFoods: [FoodSearchResult] = []
@@ -28,6 +28,7 @@ struct SearchView: View {
     // MARK: - Search Bar
     var body: some View {
         NavigationStack {
+            // Search Button
             Text("Search")
                 .multilineTextAlignment(.leading)
                 .font(.title)
@@ -82,26 +83,7 @@ struct SearchView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
                 .padding(.horizontal)
-                
-                // MARK: - Example Searches
-                Text("Example Food Items")
-                    .font(.headline)
-                    .padding(.horizontal)
-                
-                // Example Searches for the User to get ideas
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(["Banana", "Oatmeal", "Chicken Breast", "Apple"], id: \.self) { item in
-                            Text(item)
-                                .padding(.vertical, 6)
-                                .padding(.horizontal, 12)
-                                .background(Color(.green))
-                                .cornerRadius(8)
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-                
+ 
                 Divider()
                 
                 // MARK: - Search Results

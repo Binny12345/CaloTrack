@@ -7,7 +7,10 @@
 
 import SwiftUI
 
+/// Page for the user to input their Login details or Register
 struct SigninView: View {
+    
+    // Observed objects
     @ObservedObject var auth: AuthViewModel
     @ObservedObject var weightViewModel: WeightViewModel
     @ObservedObject var dailyLogViewModel: DailyLogViewModel
@@ -22,6 +25,7 @@ struct SigninView: View {
                 .font(.largeTitle)
                 .bold()
             
+            // Email TextField
             TextField("Email", text: $auth.email)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
@@ -31,16 +35,20 @@ struct SigninView: View {
                 .background(.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             
-            SecureField("Password (6+ chars)", text: $auth.password)
+            // Password TextField (SecureField)
+            SecureField("Password (min 6+ characters)", text: $auth.password)
                 .padding()
                 .background(.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             
+            // If an error exists, display it to the user
             if let error = auth.error {
                 Text(error)
                     .foregroundColor(.red)
                     .font(.footnote)
             }
+            
+            // Sign In/Up buttons
             HStack {
                 Button("Sign In") {
                     Task {
@@ -63,6 +71,3 @@ struct SigninView: View {
     }
 }
 
-//#Preview {
-//    SigninView(auth: AuthViewModel())
-//}

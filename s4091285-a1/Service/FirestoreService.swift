@@ -8,10 +8,12 @@
 import Foundation
 import FirebaseFirestore
 
+/// Handles the business log between Firebase Firestore Database and CaloTrack
 struct FirestoreService {
     private let db = Firestore.firestore()
     
     // Helper functions for convering values in firebase to SwiftUI
+    /// Helps convert the double within Firebase to double in project
     private func asDouble(_ any: Any?) -> Double? {
         if let d = any as? Double { return d }
         if let i = any as? Int { return Double(i) }
@@ -20,6 +22,7 @@ struct FirestoreService {
         return nil
     }
 
+    /// Helps convert the date within Firebase to Date in project
     private func asDate(_ any: Any?) -> Date? {
         if let ts = any as? Timestamp { return ts.dateValue() }
         if let d = any as? Date { return d }

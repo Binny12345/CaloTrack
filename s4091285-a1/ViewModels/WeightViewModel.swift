@@ -11,7 +11,7 @@ import SwiftData
 @MainActor
 class WeightViewModel: ObservableObject {
     
-    private var context: ModelContext
+    private var context: ModelContext // SwiftData Context for saving weight logs
     var userID: String = ""
     @Published var weightLogs: [WeightLog] = []
     

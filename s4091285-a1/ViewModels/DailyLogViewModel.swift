@@ -18,6 +18,7 @@ class DailyLogViewModel: ObservableObject {
     // Variabes
     @Published var dailyLogs: [FoodItem] = []
     
+    // Calls firestore service file
     private var firestoreService = FirestoreService()
     private var listener: ListenerRegistration?
     
@@ -55,6 +56,7 @@ class DailyLogViewModel: ObservableObject {
             let calendar = Calendar.current
             let today = calendar.startOfDay(for: Date())
 
+            // Filters fetched items to output today logs only
             let todaysItems = items.filter { log in
                 let logDay = calendar.startOfDay(for: log.date)
                 return logDay == today
@@ -109,6 +111,7 @@ class DailyLogViewModel: ObservableObject {
                 carbs: totalCarbsToday,
                 fats: totalFatsToday
             )
+
         } catch {
             print("Failed to save item: \(error.localizedDescription)")
         }
@@ -167,18 +170,21 @@ class DailyLogViewModel: ObservableObject {
 extension DailyLogViewModel {
     /// Allows widget to be updated with current data
     func updateWidgetData(totalCalories: Int, calorieGoal: Int, protein: Int, carbs: Int, fats: Int) {
+        
+        // Creates userDefault tied to one app group
         guard let defaults = UserDefaults(suiteName: "group.rmit-IPSE.s4091285-a1") else {
             print("Failed to access shared defaults")
             return
         }
         
-        defaults.set(totalCaloriesToday, forKey: "caloriesConsumed")
-        defaults.set(UserProfileViewModel().currentUser?.calorieBudget ?? 2000, forKey: "calorieGoal")
-        defaults.set(totalProteinToday, forKey: "proteinConsumed")
-        defaults.set(totalCarbsToday, forKey: "carbsConsumed")
-        defaults.set(totalFatsToday, forKey: "fatsConsumed")
+        // Sets and adds key/values to UserDefaults
+        defaults.set(totalCalories, forKey: "caloriesConsumed")
+        defaults.set(calorieGoal, forKey: "calorieGoal")
+        defaults.set(protein, forKey: "proteinConsumed")
+        defaults.set(carbs, forKey: "carbsConsumed")
+        defaults.set(fats, forKey: "fatsConsumed")
         defaults.synchronize()
-        
+
         WidgetCenter.shared.reloadAllTimelines()
     }
 }

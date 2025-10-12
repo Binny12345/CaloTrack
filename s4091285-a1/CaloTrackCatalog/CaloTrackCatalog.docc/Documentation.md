@@ -6,7 +6,7 @@ Welcome to the documentation for **CaloTrack**
 
 A nutrition-tracking SwiftUI application that allows users to track their calories, macronutrients and weight progress, search for food items using OpenFoodFacts API, and log meals daily.
 
-This documentation provides an overview of the app’s architecture, its models, view models, and views, as well as guidance for maintaining and possibly extending the project.  
+This documentation provides an overview of the app’s architecture, its models, views and view models. As well as guidance for maintaining and possibly extending the project.  
 
 ![Dashboard Screenshot](Dashboard.png)  
 A preview of the main dashboard view in CaloTrack.
@@ -38,9 +38,19 @@ This ensures the project is modular, testable, and easy to maintain.
 
 ## Topics
 
+### Firestore
+
+This app relies upon Google's Firebase and it's Firestore Database to handle data on the cloud.
+- ``FirestoreService``
+
+### API
+
+This app utilises OpenFoodFacts as it's Main API to provide the user with access to countless Australian Food Items
+- ``OpenFoodFactsAPI``
+
 ### Models
 
-Data structures that define food items, user information, and logs.
+Data structs that define food items, user information, and logs.
 - ``FoodItem``
 - ``UserProfile``
 - ``WeightLog``
@@ -48,6 +58,7 @@ Data structures that define food items, user information, and logs.
 ### View Models
 
 The business logic and state management layer of CaloTrack.
+- ``AuthViewModel``
 - ``BarcodeViewModel``
 - ``DailyLogViewModel``
 - ``MacroCardViewModel``
@@ -59,6 +70,7 @@ The business logic and state management layer of CaloTrack.
 SwiftUI components that make up the CaloTrack user interface.
 - ``AllMealsView``
 - ``BarcodeView``
+- ``CaloTrackApp``
 - ``ContentView``
 - ``CustomLayoutView``
 - ``DashboardView``
@@ -71,7 +83,6 @@ SwiftUI components that make up the CaloTrack user interface.
 - ``PersonalDetailsView``
 - ``SearchView``
 - ``SettingsView``
+- ``SigninView``
 - ``WeightInputView``
-
-
 

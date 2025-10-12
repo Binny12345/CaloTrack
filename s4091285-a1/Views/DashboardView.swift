@@ -34,7 +34,7 @@ struct DashboardView: View {
         
         ScrollView {
             VStack(spacing: 20) {
-                // MARK: - Custom Layout Welcome Header using Layout Protocol
+                // MARK: - Dashboard / Custom Layout Welcome Header using Layout Protocol
                 CustomLayoutView(spacing: 12) {
                     Image(systemName: "person.circle.fill")
                         .foregroundColor(.green)
@@ -48,7 +48,6 @@ struct DashboardView: View {
                 .padding(.horizontal)
                 .padding(.top, 10)
                 
-                // MARK: - Dashboard Title
                 HStack {
                     Text("Dashboard")
                         .multilineTextAlignment(.leading)
@@ -122,7 +121,7 @@ struct DashboardView: View {
                 .shadow(radius: 1)
                 
                 // MARK: - Macros
-                // Macros (delegates to MacroCardView)
+                // (delegates to MacroCardView)
                 VStack(alignment: .center, spacing: 12) {
                     Text("Macronutrients")
                         .font(.headline)
@@ -157,7 +156,7 @@ struct DashboardView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(12)
                 .shadow(radius: 1)
-                // MARK: - Weight Stats Placeholder
+                // MARK: - Weight Stats
                 VStack(alignment: .leading) {
                     Text("Weight Stats")
                         .font(.headline)
@@ -182,6 +181,7 @@ struct DashboardView: View {
     }
 }
 
+// MARK: Helper Structs
 
 /// Displays the Progress Ring of the user's consumed calories
 struct ProgressRingView: View {
@@ -217,9 +217,10 @@ struct ProgressRingView: View {
 
 /// Displays the chart of all the weight logs the user inputted
 struct WeightChart: View {
-    @Query private var userWeightLogs: [WeightLog]
+    @Query private var userWeightLogs: [WeightLog] // Gathers weight logs using Query Param
 
     init(uid: String) {
+        // Filters to show logs tied to specific firebase uid
         _userWeightLogs = Query(
             filter: #Predicate<WeightLog> { log in
                 log.userId == uid

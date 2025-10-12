@@ -30,9 +30,11 @@ struct WeightInputView: View {
                 .bold()
                 .padding()
             
+            // Weight Form
             Form {
                 Section {
                     HStack {
+                        // Weight TextField
                         TextField("Weight", text: $weight)
                             .keyboardType(.numbersAndPunctuation)
                             .onChange(of: weight) { oldValue, newValue in
@@ -63,7 +65,7 @@ struct WeightInputView: View {
                             .foregroundColor(.black)
                             .cornerRadius(8)
                     }
-                    .disabled(weight.isEmpty)
+                    .disabled(weight.isEmpty) // Doesn't add if weight field is empty
                 }
                 .padding(20)
                 .background(Color(.systemGray6))
@@ -101,9 +103,11 @@ struct WeightInputView: View {
     }
 }
 
+/// Helper Struct to display all of the saved weights conveniently to the user
 struct SavedWeights: View {
     @Query private var userWeightLogs: [WeightLog]
 
+    // Fetches weight logs by specific UID
     init(uid: String) {
         _userWeightLogs = Query(
             filter: #Predicate<WeightLog> { log in
@@ -114,6 +118,7 @@ struct SavedWeights: View {
         )
     }
     var body: some View {
+        // Sorts the fetched logs by date
         let sortedItems = userWeightLogs.sorted{ $0.date > $1.date }
         
         ForEach(sortedItems) { log in

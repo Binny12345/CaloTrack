@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// To Show the initial screen when user first downloads the app
+/// To show the initial screen when user first downloads the app
 struct OnboardingView: View {
     
     // Observed objects to pass into FormView
@@ -52,6 +52,7 @@ struct OnboardingView: View {
                     
                     Spacer()
                     
+                    // Sends user to SigninView
                     NavigationLink(destination: SigninView(auth: authViewModel, weightViewModel: weightViewModel, dailyLogViewModel: dailyLogViewModel, userProfileViewModel: userProfileViewModel)) {
                         Text("Continue")
                             .frame(width: 300, height: 50)

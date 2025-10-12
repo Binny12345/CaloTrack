@@ -51,9 +51,9 @@ struct MacroCardView: View {
         .background(Color(.systemGray6))
         .cornerRadius(12)
         .shadow(radius: isPressed ? 5 : 1)
-        
-        // Combined Gesture
         .gesture(
+            
+            // Combined Gesture
             LongPressGesture(minimumDuration: 0.5)
                 .sequenced(before: DragGesture(minimumDistance: 20))
                 .onChanged { value in

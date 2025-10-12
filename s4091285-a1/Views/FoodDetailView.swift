@@ -20,6 +20,19 @@ struct FoodDetailView: View {
     
     let options = ["Breakfast", "Lunch", "Dinner", "Snack"]
     let foodItem: FoodItem
+    var adjustedFoodItem: FoodItem {
+        // Adjust nutrition based on serving size
+        FoodItem(
+            id: foodItem.id,
+            name: foodItem.name,
+            calories: foodItem.calories * servingSize,
+            protein: foodItem.protein * servingSize,
+            carbs: foodItem.carbs * servingSize,
+            fats: foodItem.fats * servingSize,
+            mealType: selectedMenuType,
+            date: Date()
+        )
+    }
     
     /// Initialises the chosen food item and the dailyLogVM
     init(foodItem: FoodItem,
@@ -31,20 +44,6 @@ struct FoodDetailView: View {
         // Seed state from passed-in food item
         self._selectedMenuType = State(initialValue: foodItem.mealType)
         self._servingSize = State(initialValue: 1.0)
-    }
-    
-    // Adjust nutrition based on serving size
-    var adjustedFoodItem: FoodItem {
-        FoodItem(
-            id: foodItem.id,
-            name: foodItem.name,
-            calories: foodItem.calories * servingSize,
-            protein: foodItem.protein * servingSize,
-            carbs: foodItem.carbs * servingSize,
-            fats: foodItem.fats * servingSize,
-            mealType: selectedMenuType,
-            date: Date()
-        )
     }
     
     var body: some View {
@@ -85,7 +84,7 @@ struct FoodDetailView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // Passes Data into a custom struct
+                // Passes Data into a helper struct
                 HStack {
                     NutritionItem(label: "Calories", value: Int(adjustedFoodItem.calories), unit: "kcal")
                     Spacer()
@@ -102,7 +101,7 @@ struct FoodDetailView: View {
             
             Spacer()
             
-            // Buttons to add or leave
+            // Buttons to add or dismiss
             VStack(spacing: 12) {
                 Button("Add to Log") {
                     Task {

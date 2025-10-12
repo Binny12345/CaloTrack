@@ -18,8 +18,9 @@ struct CaloTrackWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             CaloTrackWidgetView(entry: entry)
         }
+        // How the widget looks when user goes to add it from "Add Widget" Setting
         .configurationDisplayName("CaloTrack Summary")
         .description("Shows your daily calorie and macros progress.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium]) // Only small and medium widgets only
     }
 }

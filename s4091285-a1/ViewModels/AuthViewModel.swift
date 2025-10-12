@@ -10,6 +10,7 @@ import Foundation
 import Foundation
 import FirebaseAuth
 
+/// Handles the business logic around authentication between Firebase and CaloTrack
 @MainActor
 final class AuthViewModel: ObservableObject {
     @Published var email: String = ""
@@ -34,7 +35,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
-    
+    /// Manages the user signing up
     func signUp() async {
         error = nil
         do {
@@ -46,6 +47,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
+    /// Manages the user signing in
     func signIn() async {
         error = nil
         do {
@@ -57,6 +59,7 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
+    /// Manages the user signing out
     func signOut() {
          error = nil
          do {

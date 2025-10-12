@@ -15,7 +15,7 @@ class MacroCardViewModel: ObservableObject {
         case bars, rings
     }
     
-    /// State variables for the user's macros and macro goals
+    // State variables for the user's macros and macro goals
     @Published var currentStyle: Style = .bars
     @Published var protein: Int = 0
     @Published var carbs: Int = 0
@@ -30,8 +30,8 @@ class MacroCardViewModel: ObservableObject {
         let styles: [Style] = [.bars, .rings]
         guard let index = styles.firstIndex(of: currentStyle) else { return }
         let newIndex = upwards
-            ? (index + 1) % styles.count
-            : (index - 1 + styles.count) % styles.count
+        ? (index + 1) % styles.count
+        : (index - 1 + styles.count) % styles.count
         currentStyle = styles[newIndex]
     }
     
@@ -42,8 +42,14 @@ class MacroCardViewModel: ObservableObject {
     /// - Parameter proteinGoal: Protein goal that the user inputted
     /// - Parameter carbsGoal: Carb goal that the user inputted
     /// - Parameter fatsGoal: Fat goal that the user inputted
-    func update(protein: Int, carbs: Int, fats: Int,
-                proteinGoal: Int, carbsGoal: Int, fatsGoal: Int) {
+    func update(
+        protein: Int,
+        carbs: Int,
+        fats: Int,
+        proteinGoal: Int,
+        carbsGoal: Int,
+        fatsGoal: Int
+    ) {
         self.protein = protein
         self.carbs = carbs
         self.fats = fats

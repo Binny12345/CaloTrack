@@ -26,7 +26,7 @@ struct AllMealsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     
-                    // Meal Sections
+                    // Orders by Meal Sections
                     ForEach(["Breakfast", "Lunch", "Dinner", "Snack"], id: \.self) { mealType in
                         if let foods = groupedMeals[mealType], !foods.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
@@ -115,8 +115,9 @@ struct FoodItemCard: View {
     }
 }
 
+/// Helper struct that displays the individual Food item with its Macros
 struct IndividualFoodData: View {
-    let food: FoodItem
+    let food: FoodItem // Passed in food item
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
