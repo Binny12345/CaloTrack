@@ -8,7 +8,7 @@ CaloTrack is an iOS application built with **SwiftUI** that helps users track th
 Binyam Sisay (s4091285)
 
 ### GitHub URL
-https://github.com/rmit-iPSE-s2-2025/a1-s4091285
+https://github.com/Binny12345/CaloTrack
 
 
 ## Features
